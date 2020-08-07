@@ -1,0 +1,25 @@
+services: 
+  web: 
+    build: "./"
+    depends_on: 
+      - db
+    ports: 
+      - "8080:8080"
+    restart: always
+    volumes: 
+      - "./tests:/srv/tests"
+      - "./wagtail_trashcan:/srv/wagtail_trashcan"
+      - "./settings_dev.py:/srv/settings_dev.py"
+    working_dir: /srv
+    environment:
+      - DATABASE_HOST=db
+  db:
+    image: postgis/postgis:12-2.5
+    expose:
+      - "5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_HOST_AUTH_METHOD=trust
+version: "3"
