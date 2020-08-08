@@ -1,1 +1,1 @@
-# wagtial trashcan
+# wagtial recycle bin

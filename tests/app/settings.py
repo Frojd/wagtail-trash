@@ -31,7 +31,7 @@ USE_TZ = True
 LANGUAGE_CODE = "en"
 
 INSTALLED_APPS = [
-    "wagtail_trashcan",
+    "wagtail_recycle_bin",
     "tests.app",
     "taggit",
     "django.contrib.contenttypes",

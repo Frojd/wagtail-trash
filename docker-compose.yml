@@ -8,7 +8,7 @@ services:
     restart: always
     volumes: 
       - "./tests:/srv/tests"
-      - "./wagtail_trashcan:/srv/wagtail_trashcan"
+      - "./wagtail_recycle_bin:/srv/wagtail_recycle_bin"
       - "./settings_dev.py:/srv/settings_dev.py"
     working_dir: /srv
     environment:
