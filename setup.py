@@ -8,7 +8,7 @@ with open("wagtail_recycle_bin/version.py", "r") as f:
 with open("README.md", "r") as f:
     readme = f.read()
 
-testing_extras = ["black"]
+testing_extras = ["black", "wagtail-factories"]
 
 setup(
     name="wagtail-recycle-bin",
