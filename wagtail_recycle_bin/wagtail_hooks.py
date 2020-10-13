@@ -34,6 +34,7 @@ class RecycleBinModelAdmin(ModelAdmin):
             recycle_bin.save_revision()
         else:
             recycle_bin = recycle_bin.first()
-            return recycle_bin.get_children()
+
+        return recycle_bin.get_children()
 
 modeladmin_register(RecycleBinModelAdmin)
