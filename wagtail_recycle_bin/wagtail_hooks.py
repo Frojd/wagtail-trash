@@ -35,3 +35,17 @@ modeladmin_register(RecycleBinModelAdmin)
 @hooks.register("before_delete_page")
 def delete_page(request, page):
     return recycle_delete(request, page)
+
+
+@hooks.register("construct_page_chooser_queryset")
+def exclude_recycle_bin_from_chooser(pages, request):
+    pages = pages.not_type(RecycleBinPage)
+
+    return pages
+
+
+@hooks.register("construct_explorer_page_queryset")
+def exclude_recycle_bin_from_explorer(parent_page, pages, request):
+    pages = pages.not_type(RecycleBinPage)
+
+    return pages
