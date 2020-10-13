@@ -4,6 +4,7 @@ from django.shortcuts import redirect
 from wagtail.core.models import Site
 from wagtail.core import hooks
 from wagtail.admin import messages
+from wagtail.admin.views.pages import delete
 from .models import RecycleBinPage
 from .utils import recycle_bin_for_request
 
@@ -20,15 +21,21 @@ def get_valid_next_url_from_request(request):
 def recycle_delete(request, page):
     recycle_bin = recycle_bin_for_request(request)
 
-    next_url = get_valid_next_url_from_request(request)
-
     parent_id = page.get_parent().id
-    page.move(recycle_bin, pos="first-child", user=request.user)
 
-    messages.success(
-        request,
-        _("Page '{0}' moved to recycle bin.").format(page.get_admin_display_title()),
-    )
+    if page.get_parent().id == recycle_bin.id:
+        page.delete(user=request.user)
+
+        messages.success(request, _("Page '{0}' deleted.").format(page.get_admin_display_title()))
+    else:
+        page.move(recycle_bin, pos="first-child", user=request.user)
+
+        messages.success(
+            request,
+            _("Page '{0}' moved to recycle bin.").format(page.get_admin_display_title()),
+        )
+
+    next_url = get_valid_next_url_from_request(request)
 
     if next_url:
         return redirect(next_url)
