@@ -1,5 +1,8 @@
 from django.test import TestCase
+from django.shortcuts import reverse
 from wagtail.tests.utils import WagtailTestUtils
+from wagtail.core.models import Page
+from wagtail_recycle_bin.views import recycle_delete
 from wagtail_recycle_bin.models import RecycleBinPage
 from wagtail_recycle_bin.wagtail_hooks import RecycleBinModelAdmin
 
@@ -21,4 +24,21 @@ class TestHooks(TestCase, WagtailTestUtils):
 
         self.client.get(index_url)
 
-        assert RecycleBinPage.objects.count() == 1
+    def test_removing_page_sends_it_to_recycle_bin(self):
+        root_page = Page.objects.get(url_path='/')
+
+        new_page = Page(title='new page')
+        root_page.add_child(instance=new_page)
+
+
+        with self.register_hook('before_delete_page', recycle_delete):
+            delete_url = (
+                reverse('wagtailadmin_pages:delete', args=(new_page.id,))
+            )
+            self.client.post(delete_url)
+
+        new_page = Page.objects.filter(title='new page')
+
+        assert new_page.exists()
+
+        assert new_page.child_of(RecycleBinPage.objects.first())
