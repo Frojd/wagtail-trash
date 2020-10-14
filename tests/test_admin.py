@@ -58,3 +58,31 @@ class TestAdmin(TestCase, WagtailTestUtils):
 
         assert not Page.objects.filter(title="delete page")
         assert RecycleBin.objects.count() == 0
+
+    def test_removing_page_unpublishes_all_sub_pages(self):
+        root_page = Page.objects.get(url_path="/")
+
+        top = Page(title="1p", has_unpublished_changes=False, live=True)
+        root_page.add_child(instance=top)
+
+        sub_page = Page(title="1p 1u", has_unpublished_changes=True, live=False)
+        top.add_child(instance=sub_page)
+
+        sub_page = Page(title="1p 2p", has_unpublished_changes=False, live=True)
+        top.add_child(instance=sub_page)
+        sub_page_id = sub_page.id
+
+        sub_sub_page = Page(title="1p 2p 3u", has_unpublished_changes=True, live=False)
+        sub_page.add_child(instance=sub_sub_page)
+
+        self.assertEqual(top.get_descendants(inclusive=True).live().count(), 2)
+        self.assertEqual(top.get_descendants(inclusive=True).not_live().count(), 2)
+
+        with self.register_hook("before_delete_page", recycle_delete):
+            delete_url = reverse("wagtailadmin_pages:delete", args=(top.id,))
+            self.client.post(delete_url)
+
+        top.refresh_from_db()
+
+        self.assertEqual(top.get_descendants(inclusive=True).live().count(), 0)
+        self.assertEqual(top.get_descendants(inclusive=True).not_live().count(), 4)

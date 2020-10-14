@@ -34,6 +34,7 @@ def recycle_delete(request, page):
             page=page, parent=parent, user=request.user, data=generate_page_data(page)
         )
 
+        page.get_descendants(inclusive=True).unpublish()
         page.move(recycle_bin, pos="first-child", user=request.user)
 
         messages.success(
