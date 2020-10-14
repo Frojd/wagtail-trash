@@ -53,11 +53,19 @@ def recycle_delete(request, page):
     return redirect("wagtailadmin_explore", parent.id)
 
 
-def recycle_restore(request, page_id):
+def recycle_restore(request, page_id, move_to_id=None):
     rb = RecycleBin.objects.get(page_id=page_id)
-
     page = rb.page
-    page.move(rb.parent, pos="first-child", user=request.user)
+
+    if not page.permissions_for_user(request.user).can_edit():
+        raise PermissionDenied
+
+    move_to_page = rb.parent
+
+    if move_to_id:
+        move_to_page = Page.objects.get(id=move_to_id)
+
+    page.move(move_to_page, pos="first-child", user=request.user)
 
     to_be_published_ids = json.loads(rb.data)["published"]
 
@@ -68,6 +76,11 @@ def recycle_restore(request, page_id):
         page.has_unpublished_changes = False
         page.live = True
         page.save()
+
+    messages.success(
+        request,
+        _("Page '{0}' successfully restored.").format(page.get_admin_display_title()),
+    )
 
     rb.delete()
 

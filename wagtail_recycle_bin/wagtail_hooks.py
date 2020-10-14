@@ -93,4 +93,9 @@ def urlconf_time():
             recycle_restore,
             name="wagtail_recycle_bin_restore",
         ),
+        path(
+            "wagtail_recycle_bin/restore/<int:page_id>/<int:move_to_id>/",
+            recycle_restore,
+            name="wagtail_recycle_bin_restore_custom_move_to",
+        ),
     ]

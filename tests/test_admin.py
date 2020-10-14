@@ -119,7 +119,7 @@ class TestAdmin(TestCase, WagtailTestUtils):
 
         with self.register_hook("register_admin_urls", urlconf_time):
             restore_url = reverse("wagtail_recycle_bin_restore", args=(top.id,))
-            self.client.post(restore_url)
+            self.client.get(restore_url)
 
         top.refresh_from_db()
 
@@ -127,3 +127,34 @@ class TestAdmin(TestCase, WagtailTestUtils):
         self.assertEqual(top.get_descendants(inclusive=True).not_live().count(), 2)
         self.assertEqual(RecycleBin.objects.count(), 0)
         self.assertEqual(RecycleBinPage.objects.first().get_children().count(), 0)
+
+    def test_restoring_page_custom_move_to(self):
+        from wagtail_recycle_bin.wagtail_hooks import urlconf_time
+
+        root_page = Page.objects.get(url_path="/")
+
+        top = Page(title="1p", has_unpublished_changes=False, live=True)
+        root_page.add_child(instance=top)
+
+        sub_page = Page(title="1p 1u", has_unpublished_changes=True, live=False)
+        top.add_child(instance=sub_page)
+
+        with self.register_hook("before_delete_page", recycle_delete):
+            delete_url = reverse("wagtailadmin_pages:delete", args=(sub_page.id,))
+            self.client.post(delete_url)
+
+        sub_page.refresh_from_db()
+
+        with self.register_hook("register_admin_urls", urlconf_time):
+            restore_url = reverse(
+                "wagtail_recycle_bin_restore_custom_move_to",
+                args=(sub_page.id, root_page.id),
+            )
+            self.client.get(restore_url)
+
+        sub_page.refresh_from_db()
+
+        self.assertIn(
+            sub_page.id,
+            list(root_page.get_children().values_list("id", flat=True)),
+        )
