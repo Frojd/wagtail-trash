@@ -8,6 +8,7 @@ from wagtail.admin import messages
 from wagtail.admin.views.pages import delete
 from .models import RecycleBinPage, RecycleBin
 from .utils import recycle_bin_for_request, generate_page_data, restore_and_move_page
+from .forms import MoveForm
 
 
 def get_valid_next_url_from_request(request):
@@ -54,9 +55,6 @@ def recycle_delete(request, page):
 
 
 def recycle_move(request, page_id):
-    from django import forms
-    from wagtail.admin.widgets import AdminPageChooser
-
     if request.method == "POST":
         rb = RecycleBin.objects.get(page_id=page_id)
         move_to_page = Page.objects.get(pk=request.POST.get("move_page"))
@@ -71,19 +69,11 @@ def recycle_move(request, page_id):
 
         return redirect("wagtailadmin_explore", rb.page_id)
 
-    class TestForm(forms.Form):
-        move_page = forms.CharField(
-            widget=AdminPageChooser(
-                choose_one_text=_("Choose a root page"),
-                choose_another_text=_("Choose a different root page"),
-            )
-        )
-
     return render(
         request,
         "wagtail_recycle_bin/move.html",
         {
-            "form": TestForm(),
+            "form": MoveForm(),
         },
     )
 
