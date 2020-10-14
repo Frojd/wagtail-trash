@@ -18,3 +18,7 @@ def recycle_bin_for_request(request):
         recycle_bin = recycle_bin.first()
 
     return recycle_bin
+
+
+def generate_page_data(page):
+    return ""

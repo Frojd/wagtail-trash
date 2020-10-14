@@ -11,7 +11,12 @@ from .views import recycle_delete
 
 
 class RecycleButtonHelper(ButtonHelper):
-    restore_button_classnames = ["button-small", "button-secondary", "icon", "icon-undo"]
+    restore_button_classnames = [
+        "button-small",
+        "button-secondary",
+        "icon",
+        "icon-undo",
+    ]
 
     def restore_button(self, obj):
         return {

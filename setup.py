@@ -17,8 +17,12 @@ setup(
     long_description=readme,
     author="Andreas Bernacca",
     author_email="ante.bernacca@gmail.com",
-    install_requires=["wagtail>=2.7",],
-    extras_require={"testing": testing_extras,},
+    install_requires=[
+        "wagtail>=2.7",
+    ],
+    extras_require={
+        "testing": testing_extras,
+    },
     setup_requires=["wheel"],
     zip_safe=False,
     license="MIT License",

@@ -5,8 +5,8 @@ from wagtail.core.models import Site
 from wagtail.core import hooks
 from wagtail.admin import messages
 from wagtail.admin.views.pages import delete
-from .models import RecycleBinPage
-from .utils import recycle_bin_for_request
+from .models import RecycleBinPage, RecycleBin
+from .utils import recycle_bin_for_request, generate_page_data
 
 
 def get_valid_next_url_from_request(request):
@@ -21,18 +21,26 @@ def get_valid_next_url_from_request(request):
 def recycle_delete(request, page):
     recycle_bin = recycle_bin_for_request(request)
 
-    parent_id = page.get_parent().id
+    parent = page.get_parent()
 
-    if page.get_parent().id == recycle_bin.id:
+    if parent.id == recycle_bin.id:
         page.delete(user=request.user)
 
-        messages.success(request, _("Page '{0}' deleted.").format(page.get_admin_display_title()))
+        messages.success(
+            request, _("Page '{0}' deleted.").format(page.get_admin_display_title())
+        )
     else:
+        RecycleBin.objects.create(
+            page=page, parent=parent, user=request.user, data=generate_page_data(page)
+        )
+
         page.move(recycle_bin, pos="first-child", user=request.user)
 
         messages.success(
             request,
-            _("Page '{0}' moved to recycle bin.").format(page.get_admin_display_title()),
+            _("Page '{0}' moved to recycle bin.").format(
+                page.get_admin_display_title()
+            ),
         )
 
     next_url = get_valid_next_url_from_request(request)
@@ -40,4 +48,4 @@ def recycle_delete(request, page):
     if next_url:
         return redirect(next_url)
 
-    return redirect("wagtailadmin_explore", parent_id)
+    return redirect("wagtailadmin_explore", parent.id)
