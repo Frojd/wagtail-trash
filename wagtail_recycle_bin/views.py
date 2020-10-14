@@ -62,6 +62,15 @@ def recycle_move(request, page_id):
         move_to_page = Page.objects.get(pk=request.POST.get("move_page"))
         restore_and_move_page(rb, move_to_page, request)
 
+        messages.success(
+            request,
+            _("Page '{0}' successfully restored.").format(
+                rb.page.get_admin_display_title()
+            ),
+        )
+
+        return redirect("wagtailadmin_explore", rb.page_id)
+
     class TestForm(forms.Form):
         move_page = forms.CharField(
             widget=AdminPageChooser(
@@ -92,7 +101,5 @@ def recycle_restore(request, page_id, move_to_id=None):
         request,
         _("Page '{0}' successfully restored.").format(page.get_admin_display_title()),
     )
-
-    rb.delete()
 
     return redirect("wagtailadmin_explore", page_id)

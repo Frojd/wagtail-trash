@@ -51,3 +51,5 @@ def restore_and_move_page(rb, move_to_page, request):
         page.has_unpublished_changes = False
         page.live = True
         page.save()
+
+    rb.delete()

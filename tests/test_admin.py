@@ -158,3 +158,5 @@ class TestAdmin(TestCase, WagtailTestUtils):
             sub_page.id,
             list(root_page.get_children().values_list("id", flat=True)),
         )
+
+        self.assertEqual(RecycleBin.objects.count(), 0)
