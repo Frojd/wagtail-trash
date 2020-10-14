@@ -7,7 +7,7 @@ from wagtail.contrib.modeladmin.helpers import ButtonHelper
 
 from .utils import recycle_bin_for_request
 from .models import RecycleBinPage
-from .views import recycle_delete
+from .views import recycle_delete, recycle_restore
 
 
 class RecycleButtonHelper(ButtonHelper):
@@ -83,3 +83,14 @@ def exclude_recycle_bin_from_explorer(parent_page, pages, request):
     pages = pages.not_type(RecycleBinPage)
 
     return pages
+
+
+@hooks.register("register_admin_urls")
+def urlconf_time():
+    return [
+        path(
+            "wagtail_recycle_bin/restore/<int:page_id>/",
+            recycle_restore,
+            name="wagtail_recycle_bin_restore",
+        ),
+    ]

@@ -1,7 +1,8 @@
+import json
 from django.utils.http import is_safe_url
 from django.utils.translation import gettext as _
 from django.shortcuts import redirect
-from wagtail.core.models import Site
+from wagtail.core.models import Site, Page
 from wagtail.core import hooks
 from wagtail.admin import messages
 from wagtail.admin.views.pages import delete
@@ -50,3 +51,24 @@ def recycle_delete(request, page):
         return redirect(next_url)
 
     return redirect("wagtailadmin_explore", parent.id)
+
+
+def recycle_restore(request, page_id):
+    rb = RecycleBin.objects.get(page_id=page_id)
+
+    page = rb.page
+    page.move(rb.parent, pos="first-child", user=request.user)
+
+    to_be_published_ids = json.loads(rb.data)["published"]
+
+    to_publish_pages = Page.objects.filter(id__in=to_be_published_ids)
+
+    for page in to_publish_pages:
+        # Should we make a revision here instead?
+        page.has_unpublished_changes = False
+        page.live = True
+        page.save()
+
+    rb.delete()
+
+    return redirect("wagtailadmin_explore", page_id)
