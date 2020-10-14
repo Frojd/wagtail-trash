@@ -5,7 +5,7 @@ makemigrations:
 	docker-compose exec web django-admin makemigrations
 
 migrate:
-	docker-compose exec web django-admin makemigrations
+	docker-compose exec web django-admin migrate
 
 test:
-	docker-compose exec web django-admin makemigrations
+	docker-compose exec web django-admin test
