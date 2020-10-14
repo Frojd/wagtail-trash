@@ -1,4 +1,5 @@
 from django.urls import path
+from django.shortcuts import reverse
 from wagtail.core import hooks
 from wagtail.core.models import Page
 from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
@@ -6,7 +7,7 @@ from wagtail.contrib.modeladmin.views import IndexView
 from wagtail.contrib.modeladmin.helpers import ButtonHelper
 
 from .utils import recycle_bin_for_request
-from .models import RecycleBinPage
+from .models import RecycleBinPage, RecycleBin
 from .views import recycle_delete, recycle_restore
 
 
@@ -20,7 +21,7 @@ class RecycleButtonHelper(ButtonHelper):
 
     def restore_button(self, obj):
         return {
-            "url": "/",
+            "url": reverse("wagtail_recycle_bin_restore", args=(obj.page.id,)),
             "label": "Restore",
             "classname": self.finalise_classname(self.restore_button_classnames),
             "title": "Restore",
@@ -42,25 +43,27 @@ class RecycleButtonHelper(ButtonHelper):
 
 
 class RecycleBinModelAdmin(ModelAdmin):
-    model = Page
+    model = RecycleBin
     menu_label = "Recycle Bin"
     menu_icon = "bin"
     admin_order_field = "title"
 
-    list_display = ("title", "sub_pages")
-    search_fields = ("title",)
+    list_display = ("title", "sub_pages", "time_recycled", "user")
+    # search_fields = ("title",)
 
     button_helper_class = RecycleButtonHelper
 
-    def sub_pages(self, page):
-        return [x.title for x in page.get_descendants()]
+    def title(self, rb):
+        return rb.page.title
+
+    def sub_pages(self, rb):
+        return [x.title for x in rb.page.get_descendants()]
 
     def get_queryset(self, request):
-        qs = super().get_queryset(request)
+        # Create a bin if there is none
+        recycle_bin_for_request(request)
 
-        recycle_bin = recycle_bin_for_request(request)
-
-        return recycle_bin.get_children()
+        return super().get_queryset(request).prefetch_related("page")
 
 
 modeladmin_register(RecycleBinModelAdmin)
