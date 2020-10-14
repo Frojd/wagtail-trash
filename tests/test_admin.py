@@ -147,10 +147,10 @@ class TestAdmin(TestCase, WagtailTestUtils):
 
         with self.register_hook("register_admin_urls", urlconf_time):
             restore_url = reverse(
-                "wagtail_recycle_bin_restore_custom_move_to",
-                args=(sub_page.id, root_page.id),
+                "wagtail_recycle_bin_move",
+                args=(sub_page.id,),
             )
-            self.client.get(restore_url)
+            self.client.post(restore_url, {"move_page": str(root_page.id)})
 
         sub_page.refresh_from_db()
 

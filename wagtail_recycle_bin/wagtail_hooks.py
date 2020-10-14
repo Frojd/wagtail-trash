@@ -4,11 +4,16 @@ from wagtail.core import hooks
 from wagtail.core.models import Page
 from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
 from wagtail.contrib.modeladmin.views import IndexView
-from wagtail.contrib.modeladmin.helpers import ButtonHelper
+from wagtail.contrib.modeladmin.helpers import ButtonHelper, PermissionHelper
 
 from .utils import recycle_bin_for_request
 from .models import RecycleBinPage, RecycleBin
-from .views import recycle_delete, recycle_restore
+from .views import recycle_delete, recycle_restore, recycle_move
+
+
+class RecyclePermissionHelper(PermissionHelper):
+    def user_can_create(self, user):
+        return False
 
 
 class RecycleButtonHelper(ButtonHelper):
@@ -18,6 +23,14 @@ class RecycleButtonHelper(ButtonHelper):
         "icon",
         "icon-undo",
     ]
+
+    def restore_and_move_button(self, obj):
+        return {
+            "url": reverse("wagtail_recycle_bin_move", args=(obj.page.id,)),
+            "label": "Restore and move",
+            "classname": self.finalise_classname(self.restore_button_classnames),
+            "title": "Restore and move",
+        }
 
     def restore_button(self, obj):
         return {
@@ -34,10 +47,9 @@ class RecycleButtonHelper(ButtonHelper):
             obj, exclude, classnames_add, classnames_exclude
         )
 
-        print(buttons)
-
         if "restore" not in (exclude or []):
             buttons.append(self.restore_button(obj))
+            buttons.append(self.restore_and_move_button(obj))
 
         return buttons
 
@@ -52,6 +64,7 @@ class RecycleBinModelAdmin(ModelAdmin):
     # search_fields = ("title",)
 
     button_helper_class = RecycleButtonHelper
+    permission_helper_class = RecyclePermissionHelper
 
     def title(self, rb):
         return rb.page.title
@@ -92,13 +105,13 @@ def exclude_recycle_bin_from_explorer(parent_page, pages, request):
 def urlconf_time():
     return [
         path(
+            "wagtail_recycle_bin/restore_and_move/<int:page_id>/",
+            recycle_move,
+            name="wagtail_recycle_bin_move",
+        ),
+        path(
             "wagtail_recycle_bin/restore/<int:page_id>/",
             recycle_restore,
             name="wagtail_recycle_bin_restore",
-        ),
-        path(
-            "wagtail_recycle_bin/restore/<int:page_id>/<int:move_to_id>/",
-            recycle_restore,
-            name="wagtail_recycle_bin_restore_custom_move_to",
         ),
     ]

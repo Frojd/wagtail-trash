@@ -1,13 +1,13 @@
 import json
 from django.utils.http import is_safe_url
 from django.utils.translation import gettext as _
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from wagtail.core.models import Site, Page
 from wagtail.core import hooks
 from wagtail.admin import messages
 from wagtail.admin.views.pages import delete
 from .models import RecycleBinPage, RecycleBin
-from .utils import recycle_bin_for_request, generate_page_data
+from .utils import recycle_bin_for_request, generate_page_data, restore_and_move_page
 
 
 def get_valid_next_url_from_request(request):
@@ -53,6 +53,32 @@ def recycle_delete(request, page):
     return redirect("wagtailadmin_explore", parent.id)
 
 
+def recycle_move(request, page_id):
+    from django import forms
+    from wagtail.admin.widgets import AdminPageChooser
+
+    if request.method == "POST":
+        rb = RecycleBin.objects.get(page_id=page_id)
+        move_to_page = Page.objects.get(pk=request.POST.get("move_page"))
+        restore_and_move_page(rb, move_to_page, request)
+
+    class TestForm(forms.Form):
+        move_page = forms.CharField(
+            widget=AdminPageChooser(
+                choose_one_text=_("Choose a root page"),
+                choose_another_text=_("Choose a different root page"),
+            )
+        )
+
+    return render(
+        request,
+        "wagtail_recycle_bin/move.html",
+        {
+            "form": TestForm(),
+        },
+    )
+
+
 def recycle_restore(request, page_id, move_to_id=None):
     rb = RecycleBin.objects.get(page_id=page_id)
     page = rb.page
@@ -60,22 +86,7 @@ def recycle_restore(request, page_id, move_to_id=None):
     if not page.permissions_for_user(request.user).can_edit():
         raise PermissionDenied
 
-    move_to_page = rb.parent
-
-    if move_to_id:
-        move_to_page = Page.objects.get(id=move_to_id)
-
-    page.move(move_to_page, pos="first-child", user=request.user)
-
-    to_be_published_ids = json.loads(rb.data)["published"]
-
-    to_publish_pages = Page.objects.filter(id__in=to_be_published_ids)
-
-    for page in to_publish_pages:
-        # Should we make a revision here instead?
-        page.has_unpublished_changes = False
-        page.live = True
-        page.save()
+    restore_and_move_page(rb, rb.parent, request)
 
     messages.success(
         request,
