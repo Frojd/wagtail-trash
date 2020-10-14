@@ -1,3 +1,4 @@
+import json
 from wagtail.core.models import Site
 from .models import RecycleBinPage
 
@@ -21,4 +22,15 @@ def recycle_bin_for_request(request):
 
 
 def generate_page_data(page):
-    return ""
+    id_list = []
+
+    if page.live:
+        id_list.append(page.id)
+
+    id_list.extend(page.get_descendants().live().values_list("id", flat=True))
+
+    data = {
+        "published": id_list,
+    }
+
+    return json.dumps(data)
