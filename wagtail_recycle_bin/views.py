@@ -21,6 +21,9 @@ def get_valid_next_url_from_request(request):
 
 
 def recycle_delete(request, page):
+    if not request.method == 'POST':
+        return
+
     recycle_bin = recycle_bin_for_request(request)
 
     parent = page.get_parent()
