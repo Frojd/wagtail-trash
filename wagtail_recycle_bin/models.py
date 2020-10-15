@@ -12,6 +12,9 @@ class RecycleBin(models.Model):
     time_recycled = models.DateTimeField(auto_now_add=True)
     data = models.TextField(blank=True)
 
+    def __str__(self):
+        return self.page.title
+
 
 class RecycleBinPage(Page):
     parent_page_types = []
