@@ -40,6 +40,20 @@ class RecycleButtonHelper(ButtonHelper):
             "title": "Restore",
         }
 
+    def has_ancestor_in_bin(self, obj):
+        parent = obj.get_parent()
+
+        if not parent:
+            return False
+
+        ancestor_app_labels = list(
+            parent.get_ancestors(inclusive=True).values_list(
+                "content_type__app_label", flat=True
+            )
+        )
+
+        return "wagtail_recycle_bin" in ancestor_app_labels
+
     def get_buttons_for_obj(
         self, obj, exclude=["edit"], classnames_add=None, classnames_exclude=None
     ):
@@ -48,7 +62,9 @@ class RecycleButtonHelper(ButtonHelper):
         )
 
         if "restore" not in (exclude or []):
-            buttons.append(self.restore_button(obj))
+            parent = obj.parent
+            if parent and not self.has_ancestor_in_bin(parent):
+                buttons.append(self.restore_button(obj))
             buttons.append(self.restore_and_move_button(obj))
 
         return buttons

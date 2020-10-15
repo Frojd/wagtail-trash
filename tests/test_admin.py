@@ -24,6 +24,50 @@ class TestAdmin(TestCase, WagtailTestUtils):
 
         self.client.get(index_url)
 
+    def test_buttons(self):
+        root_page = Page.objects.get(url_path="/")
+
+        top_page = Page(title="top_page")
+        root_page.add_child(instance=top_page)
+
+        sub_page = Page(title="sub_page")
+        top_page.add_child(instance=sub_page)
+
+        sub_sub_page = Page(title="sub_sub_page")
+        sub_page.add_child(instance=sub_sub_page)
+
+        with self.register_hook("before_delete_page", recycle_delete):
+            delete_url = reverse("wagtailadmin_pages:delete", args=(sub_sub_page.id,))
+            self.client.post(delete_url)
+
+            delete_url = reverse("wagtailadmin_pages:delete", args=(top_page.id,))
+            self.client.post(delete_url)
+
+        index = recycle_admin_url_helper.get_action_url("index")
+        resp = self.client.get(index)
+
+        print(str(resp.content))
+
+        # Since sub_sub_pages parent is now in the recycle bin we should not show the "Restore"-button.
+        self.assertFalse(
+            reverse("wagtail_recycle_bin_restore", args=(sub_sub_page.id,))
+            in str(resp.content)
+        )
+        self.assertTrue(
+            reverse("wagtail_recycle_bin_move", args=(sub_sub_page.id,))
+            in str(resp.content)
+        )
+
+        # However - top page still has a parent (root) and should be able to be restored.
+        self.assertTrue(
+            reverse("wagtail_recycle_bin_restore", args=(top_page.id,))
+            in str(resp.content)
+        )
+        self.assertTrue(
+            reverse("wagtail_recycle_bin_move", args=(top_page.id,))
+            in str(resp.content)
+        )
+
     def test_removing_page_sends_it_to_recycle_bin(self):
         root_page = Page.objects.get(url_path="/")
 
