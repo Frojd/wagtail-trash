@@ -46,8 +46,6 @@ class TestAdmin(TestCase, WagtailTestUtils):
         index = recycle_admin_url_helper.get_action_url("index")
         resp = self.client.get(index)
 
-        print(str(resp.content))
-
         # Since sub_sub_pages parent is now in the recycle bin we should not show the "Restore"-button.
         self.assertFalse(
             reverse("wagtail_recycle_bin_restore", args=(sub_sub_page.id,))

@@ -1,9 +1,10 @@
 from wagtail.core.models import Page
+from wagtail_recycle_bin.managers import RecycleManager
 
 
 class TestPage(Page):
-    pass
+    objects_excluding_bins = RecycleManager()
 
 
 class OtherPage(Page):
-    pass
+    objects_excluding_bins = RecycleManager()
