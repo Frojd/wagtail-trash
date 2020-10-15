@@ -2,6 +2,7 @@
 
 Instead of deleting pages when pressing delete, pages will get thrown into the "Recycle Bin".
 
+
 ## Install
 
 First install the python package:
@@ -16,7 +17,8 @@ INSTALLED_APPS = [
 ]
 ```
 
-Et voila!
+Run migrations, et voila!
+
 
 ## How it works
 
@@ -29,3 +31,10 @@ If the parent of the deleted page is either in the recycle bin or permanently de
 ## Caveats
 
 Since Wagtail Recycle Bin uses the hook `before_delete_page` it might interfere with your applications `before_delete_page` if you have defined one that returns a status code. Make sure wagtail recycle bin is the last hook that runs otherwise or your custom `before_delete_page` might not run since Wagtail Recycle Bin doesn't call it.
+
+
+## Clearing the bin regularly
+
+There is an included managment-command called `empty_recycle_bin` that takes a required argument `--older_than_days`. To remove all items in the bin that's been there more than 30 days run this command:
+
+`./manage.py empty_recycle_bin --older_than_days=30`
