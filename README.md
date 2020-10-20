@@ -53,8 +53,3 @@ This is a solvable issue and will be fixed in a later version.
 There is an included managment-command called `empty_recycle_bin` that takes a required argument `--older_than_days`. To remove all items in the bin that's been there more than 30 days run this command:
 
 `./manage.py empty_recycle_bin --older_than_days=30`
-
-
-## Todo
-
-- Make sure page permissions are respected in the recycle bin.
