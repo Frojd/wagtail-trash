@@ -1,4 +1,5 @@
 from django.urls import path
+from django.utils.safestring import mark_safe
 from django.shortcuts import reverse
 from wagtail.core import hooks
 from wagtail.core.models import Page
@@ -76,17 +77,27 @@ class RecycleBinModelAdmin(ModelAdmin):
     menu_icon = "bin"
     admin_order_field = "title"
 
-    list_display = ("title", "sub_pages", "time_recycled", "user")
+    list_display = ("page_tree", "time_recycled", "user")
     # search_fields = ("title",)
 
     button_helper_class = RecycleButtonHelper
     permission_helper_class = RecyclePermissionHelper
 
-    def title(self, rb):
-        return rb.page.title
+    def page_tree(self, rb):
+        descendants = rb.page.get_descendants(inclusive=True)
 
-    def sub_pages(self, rb):
-        return [x.title for x in rb.page.get_descendants()]
+        depth = rb.page.depth
+        output = ""
+
+        for i, x in enumerate(descendants):
+            output += "&nbsp;" * (x.depth - depth)
+
+            if i == 0:
+                output += "<strong>" + x.title + "</strong><br>"
+            else:
+                output += x.title + "<br>"
+
+        return mark_safe(output)
 
     def get_queryset(self, request):
         # Create a bin if there is none
