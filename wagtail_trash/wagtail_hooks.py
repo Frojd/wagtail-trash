@@ -9,7 +9,7 @@ from wagtail.contrib.modeladmin.helpers import ButtonHelper, PermissionHelper
 
 from .utils import trash_can_for_request
 from .models import TrashCanPage, TrashCan
-from .views import trash_delete, trash_restore, trash_remove
+from .views import trash_delete, trash_restore, trash_move
 
 
 class TrashPermissionHelper(PermissionHelper):
@@ -133,7 +133,7 @@ def urlconf_time():
     return [
         path(
             "wagtail_trash/restore_and_move/<int:page_id>/",
-            trash_remove,
+            trash_move,
             name="wagtail_trash_move",
         ),
         path(
