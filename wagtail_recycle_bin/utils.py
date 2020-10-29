@@ -1,24 +1,24 @@
 import json
 from wagtail.core.models import Site, Page
-from .models import RecycleBinPage
+from .models import TrashCanPage
 
 
-def recycle_bin_for_request(request):
+def trash_can_for_request(request):
     site = Site.find_for_request(request)
-    recycle_bin = RecycleBinPage.objects.in_site(site)
+    trash_can = TrashCanPage.objects.in_site(site)
 
-    if not recycle_bin.exists():
-        recycle_bin = RecycleBinPage(
-            title="Recycle bin",
+    if not trash_can.exists():
+        trash_can = TrashCanPage(
+            title="Trash Can",
             has_unpublished_changes=True,
             live=False,
         )
-        site.root_page.add_child(instance=recycle_bin)
-        recycle_bin.save_revision()
+        site.root_page.add_child(instance=trash_can)
+        trash_can.save_revision()
     else:
-        recycle_bin = recycle_bin.first()
+        trash_can = trash_can.first()
 
-    return recycle_bin
+    return trash_can
 
 
 def generate_page_data(page):

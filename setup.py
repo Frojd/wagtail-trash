@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from setuptools import find_packages, setup
 
-with open("wagtail_recycle_bin/version.py", "r") as f:
+with open("wagtail_trash/version.py", "r") as f:
     version = None
     exec(f.read())
 
@@ -11,7 +11,7 @@ with open("README.md", "r") as f:
 testing_extras = ["black", "wagtail-factories"]
 
 setup(
-    name="wagtail-recycle-bin",
+    name="wagtail-trash",
     version=version,
     description="Make deleted pages only temporarily deleted.",
     long_description=readme,

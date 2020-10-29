@@ -7,17 +7,17 @@ from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
 from wagtail.contrib.modeladmin.views import IndexView
 from wagtail.contrib.modeladmin.helpers import ButtonHelper, PermissionHelper
 
-from .utils import recycle_bin_for_request
-from .models import RecycleBinPage, RecycleBin
-from .views import recycle_delete, recycle_restore, recycle_move
+from .utils import trash_can_for_request
+from .models import TrashCanPage, TrashCan
+from .views import trash_delete, trash_restore, trash_remove
 
 
-class RecyclePermissionHelper(PermissionHelper):
+class TrashPermissionHelper(PermissionHelper):
     def user_can_create(self, user):
         return False
 
 
-class RecycleButtonHelper(ButtonHelper):
+class TrashButtonHelper(ButtonHelper):
     restore_button_classnames = [
         "button-small",
         "button-secondary",
@@ -27,7 +27,7 @@ class RecycleButtonHelper(ButtonHelper):
 
     def restore_and_move_button(self, obj):
         return {
-            "url": reverse("wagtail_recycle_bin_move", args=(obj.page.id,)),
+            "url": reverse("wagtail_trash_move", args=(obj.page.id,)),
             "label": "Restore and move",
             "classname": self.finalise_classname(self.restore_button_classnames),
             "title": "Restore and move",
@@ -35,7 +35,7 @@ class RecycleButtonHelper(ButtonHelper):
 
     def restore_button(self, obj):
         return {
-            "url": reverse("wagtail_recycle_bin_restore", args=(obj.page.id,)),
+            "url": reverse("wagtail_trash_restore", args=(obj.page.id,)),
             "label": "Restore",
             "classname": self.finalise_classname(self.restore_button_classnames),
             "title": "Restore",
@@ -53,7 +53,7 @@ class RecycleButtonHelper(ButtonHelper):
             )
         )
 
-        return "wagtail_recycle_bin" in ancestor_app_labels
+        return "wagtail_trash" in ancestor_app_labels
 
     def get_buttons_for_obj(
         self, obj, exclude=["edit"], classnames_add=None, classnames_exclude=None
@@ -71,17 +71,17 @@ class RecycleButtonHelper(ButtonHelper):
         return buttons
 
 
-class RecycleBinModelAdmin(ModelAdmin):
-    model = RecycleBin
-    menu_label = "Recycle Bin"
+class TrashCanModelAdmin(ModelAdmin):
+    model = TrashCan
+    menu_label = "Trash Can"
     menu_icon = "bin"
     admin_order_field = "title"
 
     list_display = ("page_tree", "time_recycled", "user")
     # search_fields = ("title",)
 
-    button_helper_class = RecycleButtonHelper
-    permission_helper_class = RecyclePermissionHelper
+    button_helper_class = TrashButtonHelper
+    permission_helper_class = TrashPermissionHelper
 
     def page_tree(self, rb):
         descendants = rb.page.get_descendants(inclusive=True)
@@ -101,29 +101,29 @@ class RecycleBinModelAdmin(ModelAdmin):
 
     def get_queryset(self, request):
         # Create a bin if there is none
-        recycle_bin_for_request(request)
+        trash_can_for_request(request)
 
         return super().get_queryset(request).prefetch_related("page")
 
 
-modeladmin_register(RecycleBinModelAdmin)
+modeladmin_register(TrashCanModelAdmin)
 
 
 @hooks.register("before_delete_page")
 def delete_page(request, page):
-    return recycle_delete(request, page)
+    return trash_delete(request, page)
 
 
 @hooks.register("construct_page_chooser_queryset")
-def exclude_recycle_bin_from_chooser(pages, request):
-    pages = pages.not_type(RecycleBinPage)
+def exclude_trash_can_from_chooser(pages, request):
+    pages = pages.not_type(TrashCanPage)
 
     return pages
 
 
 @hooks.register("construct_explorer_page_queryset")
-def exclude_recycle_bin_from_explorer(parent_page, pages, request):
-    pages = pages.not_type(RecycleBinPage)
+def exclude_trash_can_from_explorer(parent_page, pages, request):
+    pages = pages.not_type(TrashCanPage)
 
     return pages
 
@@ -132,13 +132,13 @@ def exclude_recycle_bin_from_explorer(parent_page, pages, request):
 def urlconf_time():
     return [
         path(
-            "wagtail_recycle_bin/restore_and_move/<int:page_id>/",
-            recycle_move,
-            name="wagtail_recycle_bin_move",
+            "wagtail_trash/restore_and_move/<int:page_id>/",
+            trash_remove,
+            name="wagtail_trash_move",
         ),
         path(
-            "wagtail_recycle_bin/restore/<int:page_id>/",
-            recycle_restore,
-            name="wagtail_recycle_bin_restore",
+            "wagtail_trash/restore/<int:page_id>/",
+            trash_restore,
+            name="wagtail_trash_restore",
         ),
     ]

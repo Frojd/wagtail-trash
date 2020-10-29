@@ -1,1 +1,1 @@
-default_app_config = "wagtail_recycle_bin.apps.RecycleBinAppConfig"
+default_app_config = "wagtail_trash.apps.TrashCanAppConfig"

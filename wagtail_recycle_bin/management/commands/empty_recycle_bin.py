@@ -1,6 +1,6 @@
 from datetime import timedelta, datetime
 from django.core.management.base import BaseCommand
-from wagtail_recycle_bin.models import RecycleBin
+from wagtail_trash.models import TrashCan
 
 
 class Command(BaseCommand):
@@ -8,7 +8,7 @@ class Command(BaseCommand):
     Remove pages from recycle bin
 
     Example:
-        ./manage.py empty_recycle_bins --older_than_days=30
+        ./manage.py empty_trash --older_than_days=30
 
     Will remove all pages that were deleted more than 30 days ago
     """
@@ -21,7 +21,7 @@ class Command(BaseCommand):
 
         removal_date = datetime.now() - timedelta(days=days)
 
-        rbs = RecycleBin.objects.filter(time_recycled__lt=removal_date)
+        rbs = TrashCan.objects.filter(time_recycled__lt=removal_date)
 
         for rb in rbs:
             rb.page.delete()

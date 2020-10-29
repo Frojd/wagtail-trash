@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from wagtail.core.models import Page
 
 
-class RecycleBin(models.Model):
+class TrashCan(models.Model):
     page = models.ForeignKey(Page, on_delete=models.CASCADE, related_name="+")
     parent = models.ForeignKey(
         Page, null=True, on_delete=models.SET_NULL, related_name="+"
@@ -16,6 +16,6 @@ class RecycleBin(models.Model):
         return self.page.title
 
 
-class RecycleBinPage(Page):
+class TrashCanPage(Page):
     parent_page_types = []
     subpage_types = []
