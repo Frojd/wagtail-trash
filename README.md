@@ -13,6 +13,7 @@ Then add it to your `INSTALLED_APPS`:
 ```python
 INSTALLED_APPS = [
     # ...
+    "wagtail.contrib.modeladmin",  # Wagtail Trash makes use of ModelAdmin, it needs to be installed.
     "wagtail_trash",
 ]
 ```
