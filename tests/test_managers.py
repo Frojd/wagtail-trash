@@ -2,12 +2,10 @@ from django.test import TestCase
 from django.shortcuts import reverse
 from wagtail.tests.utils import WagtailTestUtils
 from wagtail.core.models import Page
-from wagtail_recycle_bin.views import recycle_delete
-from wagtail_recycle_bin.models import RecycleBinPage, RecycleBin
-from wagtail_recycle_bin.wagtail_hooks import RecycleBinModelAdmin
+from wagtail_trash.views import trash_delete
+from wagtail_trash.models import TrashCanPage, TrashCan
+from wagtail_trash.wagtail_hooks import TrashCanModelAdmin
 from tests.app.models import TestPage
-
-recycle_admin_url_helper = RecycleBinModelAdmin().url_helper
 
 
 class TestManagers(TestCase, WagtailTestUtils):
@@ -15,7 +13,7 @@ class TestManagers(TestCase, WagtailTestUtils):
         self.login()
 
     def test_manager(self):
-        from wagtail_recycle_bin.wagtail_hooks import urlconf_time
+        from wagtail_trash.wagtail_hooks import urlconf_time
 
         root_page = Page.objects.get(url_path="/")
 
@@ -31,7 +29,7 @@ class TestManagers(TestCase, WagtailTestUtils):
         self.assertEquals(TestPage.objects.count(), 3)
         self.assertEquals(TestPage.objects_excluding_bins.count(), 3)
 
-        with self.register_hook("before_delete_page", recycle_delete):
+        with self.register_hook("before_delete_page", trash_delete):
             delete_url = reverse("wagtailadmin_pages:delete", args=(sub_sub_page.id,))
             self.client.post(delete_url)
 
@@ -40,14 +38,14 @@ class TestManagers(TestCase, WagtailTestUtils):
 
         with self.register_hook("register_admin_urls", urlconf_time):
             restore_url = reverse(
-                "wagtail_recycle_bin_restore", args=(sub_sub_page.id,)
+                "wagtail_trash_restore", args=(sub_sub_page.id,)
             )
             self.client.get(restore_url)
 
         self.assertEquals(TestPage.objects.count(), 3)
         self.assertEquals(TestPage.objects_excluding_bins.count(), 3)
 
-        with self.register_hook("before_delete_page", recycle_delete):
+        with self.register_hook("before_delete_page", trash_delete):
             delete_url = reverse("wagtailadmin_pages:delete", args=(top_page.id,))
             self.client.post(delete_url)
 

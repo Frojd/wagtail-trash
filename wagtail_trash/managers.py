@@ -1,11 +1,11 @@
 from django.db import models
 from wagtail.core.query import PageQuerySet
-from wagtail_recycle_bin.models import RecycleBinPage
+from wagtail_trash.models import TrashCanPage
 
 
-class RecyclePageQuerySet(PageQuerySet):
-    def exclude_recycle_bins(self):
-        bins = RecycleBinPage.objects.all()
+class TrashCanPageQuerySet(PageQuerySet):
+    def exclude_trash(self):
+        bins = TrashCanPage.objects.all()
 
         if not bins.exists():
             return self
@@ -20,9 +20,9 @@ class RecyclePageQuerySet(PageQuerySet):
         return self.exclude(q)
 
 
-class BaseRecycleManager(models.Manager):
+class BaseTrashManager(models.Manager):
     def get_queryset(self):
-        return (super().get_queryset()).exclude_recycle_bins()
+        return (super().get_queryset()).exclude_trash()
 
 
-RecycleManager = BaseRecycleManager.from_queryset(RecyclePageQuerySet)
+TrashManager = BaseTrashManager.from_queryset(TrashCanPageQuerySet)

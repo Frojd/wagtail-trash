@@ -6,8 +6,8 @@ from wagtail.core.models import Site, Page
 from wagtail.core import hooks
 from wagtail.admin import messages
 from wagtail.admin.views.pages import delete
-from .models import RecycleBinPage, RecycleBin
-from .utils import recycle_bin_for_request, generate_page_data, restore_and_move_page
+from .models import TrashCanPage, TrashCan
+from .utils import trash_can_for_request, generate_page_data, restore_and_move_page
 from .forms import MoveForm
 
 
@@ -20,31 +20,31 @@ def get_valid_next_url_from_request(request):
     return next_url
 
 
-def recycle_delete(request, page):
+def trash_delete(request, page):
     if not request.method == 'POST':
         return
 
-    recycle_bin = recycle_bin_for_request(request)
+    trash_can = trash_can_for_request(request)
 
     parent = page.get_parent()
 
-    if parent.id == recycle_bin.id:
+    if parent.id == trash_can.id:
         page.delete(user=request.user)
 
         messages.success(
             request, _("Page '{0}' deleted.").format(page.get_admin_display_title())
         )
     else:
-        RecycleBin.objects.create(
+        TrashCan.objects.create(
             page=page, parent=parent, user=request.user, data=generate_page_data(page)
         )
 
         page.get_descendants(inclusive=True).unpublish()
-        page.move(recycle_bin, pos="first-child", user=request.user)
+        page.move(trash_can, pos="first-child", user=request.user)
 
         messages.success(
             request,
-            _("Page '{0}' moved to recycle bin.").format(
+            _("Page '{0}' moved to trash_can.").format(
                 page.get_admin_display_title()
             ),
         )
@@ -57,9 +57,9 @@ def recycle_delete(request, page):
     return redirect("wagtailadmin_explore", parent.id)
 
 
-def recycle_move(request, page_id):
+def trash_move(request, page_id):
     if request.method == "POST":
-        rb = RecycleBin.objects.get(page_id=page_id)
+        rb = TrashCan.objects.get(page_id=page_id)
         move_to_page = Page.objects.get(pk=request.POST.get("move_page"))
         restore_and_move_page(rb, move_to_page, request)
 
@@ -74,15 +74,15 @@ def recycle_move(request, page_id):
 
     return render(
         request,
-        "wagtail_recycle_bin/move.html",
+        "wagtail_trash/move.html",
         {
             "form": MoveForm(),
         },
     )
 
 
-def recycle_restore(request, page_id, move_to_id=None):
-    rb = RecycleBin.objects.get(page_id=page_id)
+def trash_restore(request, page_id, move_to_id=None):
+    rb = TrashCan.objects.get(page_id=page_id)
     page = rb.page
 
     if not page.permissions_for_user(request.user).can_edit():

@@ -2,7 +2,7 @@ import json
 from django.test import TestCase
 from wagtail.tests.utils import WagtailTestUtils
 from wagtail.core.models import Page
-from wagtail_recycle_bin.utils import generate_page_data
+from wagtail_trash.utils import generate_page_data
 
 
 class TestUtils(TestCase, WagtailTestUtils):
