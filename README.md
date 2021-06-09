@@ -54,3 +54,7 @@ This is a solvable issue and will be fixed in a later version.
 There is an included managment-command called `empty_trash` that takes a required argument `--older_than_days`. To remove all items in the bin that's been there more than 30 days run this command:
 
 `./manage.py empty_trash --older_than_days=30`
+
+## Git flow
+
+This project uses git flow, current release is in the `main` branch and the current development is in the `develop` branch.
