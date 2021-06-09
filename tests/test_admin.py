@@ -202,3 +202,21 @@ class TestAdmin(TestCase, WagtailTestUtils):
         )
 
         self.assertEqual(TrashCan.objects.count(), 0)
+
+    def test_move_view_renders(self):
+        from wagtail_trash.wagtail_hooks import urlconf_time
+
+        root_page = Page.objects.get(url_path="/")
+
+        top = Page(title="1p", has_unpublished_changes=False, live=True)
+        root_page.add_child(instance=top)
+
+        sub_page = Page(title="1p 1u", has_unpublished_changes=True, live=False)
+        top.add_child(instance=sub_page)
+
+        with self.register_hook("register_admin_urls", urlconf_time):
+            restore_url = reverse(
+                "wagtail_trash_move",
+                args=(sub_page.id,),
+            )
+            self.client.get(restore_url)
