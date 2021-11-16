@@ -1,0 +1,94 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-11-16 10:46-0300\n"
+"PO-Revision-Date: 2021-11-16 09:24-0300\n"
+"Last-Translator: Alexandre Marinho <lyralemos@gmail.com>\n"
+"Language: pt_BRMIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: forms.py:9
+msgid "Choose a root page"
+msgstr "Escolha uma página raiz"
+
+#: forms.py:10
+msgid "Choose a different root page"
+msgstr "Escolha uma página raiz diferente"
+
+#: models.py:9
+msgid "Page"
+msgstr "Página"
+
+#: models.py:12
+msgid "Parent"
+msgstr "Pai"
+
+#: models.py:14
+msgid "User"
+msgstr "Usuário"
+
+#: models.py:15
+msgid "Time Recycled"
+msgstr "Horário da reciclagem"
+
+#: models.py:16
+msgid "Data"
+msgstr "Dados"
+
+#: models.py:22 templates/wagtail_trash/move.html:3 wagtail_hooks.py:77
+msgid "Trash Can"
+msgstr "Lixeira"
+
+#: models.py:23
+msgid "Trash Cans"
+msgstr "Lixeiras"
+
+#: templates/wagtail_trash/move.html:12
+msgid "Restore page to new location"
+msgstr "Restaurar página em nova localização"
+
+#: templates/wagtail_trash/move.html:17
+msgid ""
+"\n"
+"                <p>\n"
+"                Choose a destination where the page will be restored to\n"
+"                </p>\n"
+"            "
+msgstr ""
+"\n"
+"                <p>\n"
+"                Escolha um detino onde a página vai ser restaurada em\n"
+"                </p>\n"
+"            "
+
+#: templates/wagtail_trash/move.html:36 wagtail_hooks.py:40 wagtail_hooks.py:42
+msgid "Restore"
+msgstr "Restaurar"
+
+#: views.py:35
+#, python-brace-format
+msgid "Page '{0}' deleted."
+msgstr "Página '{0}' removida"
+
+#: views.py:47
+#, python-brace-format
+msgid "Page '{0}' moved to trash_can."
+msgstr "Página '{0}' movida para a lixeira."
+
+#: views.py:68 views.py:95
+#, python-brace-format
+msgid "Page '{0}' successfully restored."
+msgstr "Página '{0}' restaurada com sucesso."
+
+#: wagtail_hooks.py:32 wagtail_hooks.py:34
+msgid "Restore and move"
+msgstr "Restaurar e mover"
