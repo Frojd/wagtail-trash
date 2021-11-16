@@ -1,5 +1,6 @@
 from django.urls import path
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext as _
 from django.shortcuts import reverse
 from wagtail.core import hooks
 from wagtail.core.models import Page
@@ -28,17 +29,17 @@ class TrashButtonHelper(ButtonHelper):
     def restore_and_move_button(self, obj):
         return {
             "url": reverse("wagtail_trash_move", args=(obj.page.id,)),
-            "label": "Restore and move",
+            "label": _("Restore and move"),
             "classname": self.finalise_classname(self.restore_button_classnames),
-            "title": "Restore and move",
+            "title": _("Restore and move"),
         }
 
     def restore_button(self, obj):
         return {
             "url": reverse("wagtail_trash_restore", args=(obj.page.id,)),
-            "label": "Restore",
+            "label": _("Restore"),
             "classname": self.finalise_classname(self.restore_button_classnames),
-            "title": "Restore",
+            "title": _("Restore"),
         }
 
     def has_ancestor_in_bin(self, obj):
@@ -73,7 +74,7 @@ class TrashButtonHelper(ButtonHelper):
 
 class TrashCanModelAdmin(ModelAdmin):
     model = TrashCan
-    menu_label = "Trash Can"
+    menu_label = _("Trash Can")
     menu_icon = "bin"
     admin_order_field = "title"
 

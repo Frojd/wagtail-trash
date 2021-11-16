@@ -3,3 +3,4 @@ include README.md
 
 recursive-include wagtail_trash/templates *
 recursive-include wagtail_trash/migrations *
+recursive-include wagtail_trash/locale *
