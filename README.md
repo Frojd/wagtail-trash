@@ -58,3 +58,8 @@ There is an included managment-command called `empty_trash` that takes a require
 ## Git flow
 
 This project uses git flow, current release is in the `main` branch and the current development is in the `develop` branch.
+
+
+## License
+
+wagtail trash is released under the [MIT License](http://www.opensource.org/licenses/MIT).
