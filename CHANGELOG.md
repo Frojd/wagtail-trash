@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.0 (IN DEVELOPMENT)
+## 0.2.0
 
 - Add changelog (Andreas Bernacca)
 - Add translations (Alexandre Marinho)

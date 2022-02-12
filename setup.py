@@ -51,5 +51,5 @@ setup(
     project_urls={
         "Source": "https://github.com/Frojd/wagtail-trash/",
         "Changelog": "https://github.com/Frojd/wagtail-trash/blob/main/CHANGELOG.md",
-    }
+    },
 )
