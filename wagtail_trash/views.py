@@ -1,7 +1,7 @@
 import json
 
 from django.shortcuts import redirect, render
-from django.utils.http import is_safe_url
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext as _
 from wagtail.admin import messages
 from wagtail.admin.views.pages import delete
@@ -15,7 +15,7 @@ from .utils import generate_page_data, restore_and_move_page, trash_can_for_requ
 
 def get_valid_next_url_from_request(request):
     next_url = request.POST.get("next") or request.GET.get("next")
-    if not next_url or not is_safe_url(
+    if not next_url or not url_has_allowed_host_and_scheme(
         url=next_url, allowed_hosts={request.get_host()}
     ):
         return ""
