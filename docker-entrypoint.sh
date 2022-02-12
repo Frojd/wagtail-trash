@@ -30,11 +30,6 @@ case "$CMD" in
         exec python manage.py runserver 0.0.0.0:8080
         ;;
 
-    "typecheck" )
-        echo Running typecheck
-        exec mypy .
-        ;;
-
     "test" )
         wait_for_db
 
