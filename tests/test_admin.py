@@ -52,18 +52,15 @@ class TestAdmin(TestCase, WagtailTestUtils):
             in str(resp.content)
         )
         self.assertTrue(
-            reverse("wagtail_trash_move", args=(sub_sub_page.id,))
-            in str(resp.content)
+            reverse("wagtail_trash_move", args=(sub_sub_page.id,)) in str(resp.content)
         )
 
         # However - top page still has a parent (root) and should be able to be restored.
         self.assertTrue(
-            reverse("wagtail_trash_restore", args=(top_page.id,))
-            in str(resp.content)
+            reverse("wagtail_trash_restore", args=(top_page.id,)) in str(resp.content)
         )
         self.assertTrue(
-            reverse("wagtail_trash_move", args=(top_page.id,))
-            in str(resp.content)
+            reverse("wagtail_trash_move", args=(top_page.id,)) in str(resp.content)
         )
 
     def test_removing_page_sends_it_to_trash_can(self):

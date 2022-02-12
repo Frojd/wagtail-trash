@@ -37,7 +37,6 @@ class TestPermissions(TestCase, WagtailTestUtils):
     #     admin_permission = Permission.objects.get(content_type__app_label='wagtailadmin', codename='access_admin')
     #     trash_permissions = Permission.objects.filter(content_type__app_label__startswith='wagtail_trash')
 
-
     #     self.test_user_with_permission.groups.add(self.group, moderators)
     #     self.test_user_with_permission.user_permissions.add(admin_permission, *trash_permissions)
     #     self.test_user_without_permission.groups.add(moderators)
@@ -68,7 +67,6 @@ class TestPermissions(TestCase, WagtailTestUtils):
 
     #     resp = self.client.get(index_url)
     #     html = str(resp.content)
-
 
     #     self.assertEquals(html.count("data-object-pk"), 0)
 

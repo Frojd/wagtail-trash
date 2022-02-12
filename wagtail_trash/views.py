@@ -21,7 +21,7 @@ def get_valid_next_url_from_request(request):
 
 
 def trash_delete(request, page):
-    if not request.method == 'POST':
+    if not request.method == "POST":
         return
 
     trash_can = trash_can_for_request(request)
@@ -44,9 +44,7 @@ def trash_delete(request, page):
 
         messages.success(
             request,
-            _("Page '{0}' moved to trash_can.").format(
-                page.get_admin_display_title()
-            ),
+            _("Page '{0}' moved to trash_can.").format(page.get_admin_display_title()),
         )
 
     next_url = get_valid_next_url_from_request(request)
