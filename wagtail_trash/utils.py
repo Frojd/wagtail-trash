@@ -1,7 +1,9 @@
 import json
 from django.core.exceptions import PermissionDenied
-from wagtail.core.actions.move_page import MovePageAction
 import wagtail
+
+if wagtail.VERSION > (2, 15):
+    from wagtail.core.actions.move_page import MovePageAction
 
 from wagtail.core.models import Page, Site
 
