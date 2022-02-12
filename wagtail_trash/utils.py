@@ -1,5 +1,7 @@
 import json
-from wagtail.core.models import Site, Page
+
+from wagtail.core.models import Page, Site
+
 from .models import TrashCanPage
 
 

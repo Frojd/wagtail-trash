@@ -1,9 +1,10 @@
-from django.test import TestCase
 from django.shortcuts import reverse
-from wagtail.tests.utils import WagtailTestUtils
+from django.test import TestCase
 from wagtail.core.models import Page
+from wagtail.tests.utils import WagtailTestUtils
+
+from wagtail_trash.models import TrashCan, TrashCanPage
 from wagtail_trash.views import trash_delete
-from wagtail_trash.models import TrashCanPage, TrashCan
 from wagtail_trash.wagtail_hooks import TrashCanModelAdmin
 
 trash_admin_url_helper = TrashCanModelAdmin().url_helper

@@ -1,8 +1,10 @@
-from datetime import timedelta, datetime
+from datetime import datetime, timedelta
+
 from django.core.management import call_command
 from django.test import TestCase
-from wagtail.tests.utils import WagtailTestUtils
 from wagtail.core.models import Page
+from wagtail.tests.utils import WagtailTestUtils
+
 from wagtail_trash.models import TrashCan
 
 

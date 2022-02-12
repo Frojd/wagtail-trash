@@ -1,5 +1,6 @@
 from django.db import models
 from wagtail.core.query import PageQuerySet
+
 from wagtail_trash.models import TrashCanPage
 
 

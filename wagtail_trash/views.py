@@ -1,14 +1,16 @@
 import json
+
+from django.shortcuts import redirect, render
 from django.utils.http import is_safe_url
 from django.utils.translation import gettext as _
-from django.shortcuts import redirect, render
-from wagtail.core.models import Site, Page
-from wagtail.core import hooks
 from wagtail.admin import messages
 from wagtail.admin.views.pages import delete
-from .models import TrashCanPage, TrashCan
-from .utils import trash_can_for_request, generate_page_data, restore_and_move_page
+from wagtail.core import hooks
+from wagtail.core.models import Page, Site
+
 from .forms import MoveForm
+from .models import TrashCan, TrashCanPage
+from .utils import generate_page_data, restore_and_move_page, trash_can_for_request
 
 
 def get_valid_next_url_from_request(request):
