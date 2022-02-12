@@ -7,6 +7,7 @@ from wagtail.admin import messages
 from wagtail.admin.views.pages import delete
 from wagtail.core import hooks
 from wagtail.core.models import Page, Site
+from wagtail.core.actions.move_page import MovePageAction
 
 from .forms import MoveForm
 from .models import TrashCan, TrashCanPage
@@ -42,7 +43,10 @@ def trash_delete(request, page):
         )
 
         page.get_descendants(inclusive=True).unpublish()
-        page.move(trash_can, pos="first-child", user=request.user)
+
+        action = MovePageAction(page, trash_can, pos='first-child', user=request.user)
+        action.execute(skip_permission_checks=True)
+        # page.move(trash_can, pos="first-child", user=request.user)
 
         messages.success(
             request,

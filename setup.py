@@ -19,7 +19,7 @@ setup(
     author="Andreas Bernacca",
     author_email="ante.bernacca@gmail.com",
     install_requires=[
-        "wagtail>=2.14,<2.16",
+        "wagtail>=2.14,<2.17",
     ],
     extras_require={
         "testing": testing_extras,
