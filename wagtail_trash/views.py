@@ -1,16 +1,17 @@
 import json
+from django.core.exceptions import PermissionDenied
 
 from django.shortcuts import redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext as _
+from treebeard.mp_tree import MP_MoveHandler
 from wagtail.admin import messages
-from wagtail.admin.views.pages import delete
-from wagtail.core import hooks
-from wagtail.core.models import Page, Site
-from wagtail.core.actions.move_page import MovePageAction
+from wagtail.core.models import Page
+import wagtail
+
 
 from .forms import MoveForm
-from .models import TrashCan, TrashCanPage
+from .models import TrashCan
 from .utils import generate_page_data, restore_and_move_page, trash_can_for_request
 
 
@@ -44,9 +45,10 @@ def trash_delete(request, page):
 
         page.get_descendants(inclusive=True).unpublish()
 
-        action = MovePageAction(page, trash_can, pos='first-child', user=request.user)
-        action.execute(skip_permission_checks=True)
-        # page.move(trash_can, pos="first-child", user=request.user)
+        if wagtail.VERSION > (2, 15):
+            MP_MoveHandler(page, trash_can, "first-child").process()
+        else:
+            page.move(trash_can, pos="first-child", user=request.user)
 
         messages.success(
             request,
@@ -85,7 +87,7 @@ def trash_move(request, page_id):
     )
 
 
-def trash_restore(request, page_id, move_to_id=None):
+def trash_restore(request, page_id):
     rb = TrashCan.objects.get(page_id=page_id)
     page = rb.page
 

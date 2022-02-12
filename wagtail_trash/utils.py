@@ -1,6 +1,7 @@
 import json
 from django.core.exceptions import PermissionDenied
 from wagtail.core.actions.move_page import MovePageAction
+import wagtail
 
 from wagtail.core.models import Page, Site
 
@@ -44,10 +45,13 @@ def restore_and_move_page(rb, move_to_page, request):
     if not rb.page.permissions_for_user(request.user).can_move():
         raise PermissionDenied
 
-    # rb.page.move(move_to_page, pos="first-child", user=request.user)
-
-    action = MovePageAction(rb.page, move_to_page, pos='first-child', user=request.user)
-    action.execute(skip_permission_checks=True)
+    if wagtail.VERSION > (2, 15):
+        action = MovePageAction(
+            rb.page, move_to_page, pos="first-child", user=request.user
+        )
+        action.execute(skip_permission_checks=True)
+    else:
+        rb.page.move(move_to_page, pos="first-child", user=request.user)
 
     to_be_published_ids = json.loads(rb.data)["published"]
 
