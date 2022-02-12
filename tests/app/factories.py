@@ -1,4 +1,5 @@
 from wagtail_factories import PageFactory
+
 from wagtail_trash.models import TrashCanPage
 
 

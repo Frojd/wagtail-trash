@@ -6,3 +6,4 @@ __pycache__
 .vim
 build/
 dist/
+docker-compose.override.yml

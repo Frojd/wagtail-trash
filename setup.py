@@ -19,7 +19,7 @@ setup(
     author="Andreas Bernacca",
     author_email="ante.bernacca@gmail.com",
     install_requires=[
-        "wagtail>=2.7",
+        "wagtail>=2.14,<2.16",
     ],
     extras_require={
         "testing": testing_extras,
@@ -36,11 +36,20 @@ setup(
         "Operating System :: OS Independent",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "Framework :: Django",
+        "Framework :: Django :: 2.2",
+        "Framework :: Django :: 3.2",
+        "Framework :: Django :: 4.0",
+        "Framework :: Wagtail",
+        "Framework :: Wagtail :: 2",
         "License :: OSI Approved :: MIT License",
     ],
+    project_urls={
+        "Source": "https://github.com/Frojd/wagtail-trash/",
+        "Changelog": "https://github.com/Frojd/wagtail-trash/blob/main/CHANGELOG.md",
+    },
 )

@@ -1,9 +1,10 @@
-from django.test import TestCase
 from django.shortcuts import reverse
-from wagtail.tests.utils import WagtailTestUtils
+from django.test import TestCase
 from wagtail.core.models import Page
+from wagtail.tests.utils import WagtailTestUtils
+
+from wagtail_trash.models import TrashCan, TrashCanPage
 from wagtail_trash.views import trash_delete
-from wagtail_trash.models import TrashCanPage, TrashCan
 from wagtail_trash.wagtail_hooks import TrashCanModelAdmin
 
 trash_admin_url_helper = TrashCanModelAdmin().url_helper
@@ -52,18 +53,15 @@ class TestAdmin(TestCase, WagtailTestUtils):
             in str(resp.content)
         )
         self.assertTrue(
-            reverse("wagtail_trash_move", args=(sub_sub_page.id,))
-            in str(resp.content)
+            reverse("wagtail_trash_move", args=(sub_sub_page.id,)) in str(resp.content)
         )
 
         # However - top page still has a parent (root) and should be able to be restored.
         self.assertTrue(
-            reverse("wagtail_trash_restore", args=(top_page.id,))
-            in str(resp.content)
+            reverse("wagtail_trash_restore", args=(top_page.id,)) in str(resp.content)
         )
         self.assertTrue(
-            reverse("wagtail_trash_move", args=(top_page.id,))
-            in str(resp.content)
+            reverse("wagtail_trash_move", args=(top_page.id,)) in str(resp.content)
         )
 
     def test_removing_page_sends_it_to_trash_can(self):
@@ -202,3 +200,21 @@ class TestAdmin(TestCase, WagtailTestUtils):
         )
 
         self.assertEqual(TrashCan.objects.count(), 0)
+
+    def test_move_view_renders(self):
+        from wagtail_trash.wagtail_hooks import urlconf_time
+
+        root_page = Page.objects.get(url_path="/")
+
+        top = Page(title="1p", has_unpublished_changes=False, live=True)
+        root_page.add_child(instance=top)
+
+        sub_page = Page(title="1p 1u", has_unpublished_changes=True, live=False)
+        top.add_child(instance=sub_page)
+
+        with self.register_hook("register_admin_urls", urlconf_time):
+            restore_url = reverse(
+                "wagtail_trash_move",
+                args=(sub_page.id,),
+            )
+            self.client.get(restore_url)

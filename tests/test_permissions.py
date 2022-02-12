@@ -1,12 +1,12 @@
-from django.test import TestCase
-from django.shortcuts import reverse
-from django.contrib.auth.models import Group, Permission
 from django.contrib.auth import get_user_model
-from wagtail.core.models import GroupPagePermission
+from django.contrib.auth.models import Group, Permission
+from django.shortcuts import reverse
+from django.test import TestCase
+from wagtail.core.models import GroupPagePermission, Page
 from wagtail.tests.utils import WagtailTestUtils
-from wagtail.core.models import Page
+
+from wagtail_trash.models import TrashCan, TrashCanPage
 from wagtail_trash.views import trash_delete
-from wagtail_trash.models import TrashCanPage, TrashCan
 from wagtail_trash.wagtail_hooks import TrashCanModelAdmin
 
 trash_admin_url_helper = TrashCanModelAdmin().url_helper
@@ -36,7 +36,6 @@ class TestPermissions(TestCase, WagtailTestUtils):
 
     #     admin_permission = Permission.objects.get(content_type__app_label='wagtailadmin', codename='access_admin')
     #     trash_permissions = Permission.objects.filter(content_type__app_label__startswith='wagtail_trash')
-
 
     #     self.test_user_with_permission.groups.add(self.group, moderators)
     #     self.test_user_with_permission.user_permissions.add(admin_permission, *trash_permissions)
@@ -68,7 +67,6 @@ class TestPermissions(TestCase, WagtailTestUtils):
 
     #     resp = self.client.get(index_url)
     #     html = str(resp.content)
-
 
     #     self.assertEquals(html.count("data-object-pk"), 0)
 

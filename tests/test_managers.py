@@ -1,11 +1,12 @@
-from django.test import TestCase
 from django.shortcuts import reverse
-from wagtail.tests.utils import WagtailTestUtils
+from django.test import TestCase
 from wagtail.core.models import Page
-from wagtail_trash.views import trash_delete
-from wagtail_trash.models import TrashCanPage, TrashCan
-from wagtail_trash.wagtail_hooks import TrashCanModelAdmin
+from wagtail.tests.utils import WagtailTestUtils
+
 from tests.app.models import TestPage
+from wagtail_trash.models import TrashCan, TrashCanPage
+from wagtail_trash.views import trash_delete
+from wagtail_trash.wagtail_hooks import TrashCanModelAdmin
 
 
 class TestManagers(TestCase, WagtailTestUtils):
@@ -37,9 +38,7 @@ class TestManagers(TestCase, WagtailTestUtils):
         self.assertEquals(TestPage.objects_excluding_bins.count(), 2)
 
         with self.register_hook("register_admin_urls", urlconf_time):
-            restore_url = reverse(
-                "wagtail_trash_restore", args=(sub_sub_page.id,)
-            )
+            restore_url = reverse("wagtail_trash_restore", args=(sub_sub_page.id,))
             self.client.get(restore_url)
 
         self.assertEquals(TestPage.objects.count(), 3)

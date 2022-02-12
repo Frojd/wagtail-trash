@@ -1,0 +1,98 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-02-12 07:57+0100\n"
+"PO-Revision-Date: 2022-02-12 08:04+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: sv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#: wagtail_trash/forms.py:9
+msgid "Choose a root page"
+msgstr "Välj en rotsida"
+
+#: wagtail_trash/forms.py:10
+msgid "Choose a different root page"
+msgstr "Välj en annan rotsida"
+
+#: wagtail_trash/models.py:9
+msgid "Page"
+msgstr "Sida"
+
+#: wagtail_trash/models.py:16
+msgid "Parent"
+msgstr "Topp"
+
+#: wagtail_trash/models.py:19
+msgid "User"
+msgstr "Användare"
+
+#: wagtail_trash/models.py:21
+msgid "Time Recycled"
+msgstr "Borttagningsdatum"
+
+#: wagtail_trash/models.py:22
+msgid "Data"
+msgstr "Datum"
+
+#: wagtail_trash/models.py:28 wagtail_trash/templates/wagtail_trash/move.html:3
+#: wagtail_trash/wagtail_hooks.py:77
+msgid "Trash Can"
+msgstr "Papperskorg"
+
+#: wagtail_trash/models.py:29
+msgid "Trash Cans"
+msgstr "Papperskorgar"
+
+#: wagtail_trash/templates/wagtail_trash/move.html:12
+msgid "Restore page to new location"
+msgstr "Återställ sida till en ny plats"
+
+#: wagtail_trash/templates/wagtail_trash/move.html:17
+msgid ""
+"\n"
+"                <p>\n"
+"                Choose a destination where the page will be restored to\n"
+"                </p>\n"
+"            "
+msgstr ""
+"\n"
+"                <p>\n"
+"                Välj en målsida där sidan kommer återställas\n"
+"                </p>\n"
+"            "
+
+#: wagtail_trash/templates/wagtail_trash/move.html:36
+#: wagtail_trash/wagtail_hooks.py:40 wagtail_trash/wagtail_hooks.py:42
+msgid "Restore"
+msgstr "Återställ"
+
+#: wagtail_trash/views.py:37
+#, python-brace-format
+msgid "Page '{0}' deleted."
+msgstr "Sida ‘{0}’ raderad."
+
+#: wagtail_trash/views.py:49
+#, python-brace-format
+msgid "Page '{0}' moved to trash_can."
+msgstr "Sida ‘{0}’ flyttades to papperskorgen."
+
+#: wagtail_trash/views.py:68 wagtail_trash/views.py:95
+#, python-brace-format
+msgid "Page '{0}' successfully restored."
+msgstr "Sida ‘{0}’ återställdes."
+
+#: wagtail_trash/wagtail_hooks.py:32 wagtail_trash/wagtail_hooks.py:34
+msgid "Restore and move"
+msgstr "Återställ och flytta"

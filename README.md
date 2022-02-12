@@ -1,3 +1,5 @@
+[![Run tests, lint and publish](https://github.com/Frojd/wagtail-trash/actions/workflows/main.yml/badge.svg)](https://github.com/Frojd/wagtail-trash/actions/workflows/main.yml) [![PyPI version](https://badge.fury.io/py/wagtail-trash.svg)](https://badge.fury.io/py/wagtail-trash)
+
 # wagtail trash
 
 Instead of deleting pages when pressing delete, pages will get thrown into the "Trash Can".
@@ -54,3 +56,12 @@ This is a solvable issue and will be fixed in a later version.
 There is an included managment-command called `empty_trash` that takes a required argument `--older_than_days`. To remove all items in the bin that's been there more than 30 days run this command:
 
 `./manage.py empty_trash --older_than_days=30`
+
+## Git flow
+
+This project uses git flow, current release is in the `main` branch and the current development is in the `develop` branch.
+
+
+## License
+
+wagtail trash is released under the [MIT License](http://www.opensource.org/licenses/MIT).

@@ -1,7 +1,9 @@
 import json
+
 from django.test import TestCase
-from wagtail.tests.utils import WagtailTestUtils
 from wagtail.core.models import Page
+from wagtail.tests.utils import WagtailTestUtils
+
 from wagtail_trash.utils import generate_page_data
 
 

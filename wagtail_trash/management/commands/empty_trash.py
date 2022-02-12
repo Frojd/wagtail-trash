@@ -1,5 +1,7 @@
-from datetime import timedelta, datetime
+from datetime import datetime, timedelta
+
 from django.core.management.base import BaseCommand
+
 from wagtail_trash.models import TrashCan
 
 
