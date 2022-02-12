@@ -45,7 +45,7 @@ def trash_delete(request, page):
 
         page.get_descendants(inclusive=True).unpublish()
 
-        if wagtail.VERSION > (2, 15):
+        if wagtail.__version__ > "2.15":
             MP_MoveHandler(page, trash_can, "first-child").process()
         else:
             page.move(trash_can, pos="first-child", user=request.user)

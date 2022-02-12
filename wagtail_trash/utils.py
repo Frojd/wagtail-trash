@@ -2,7 +2,7 @@ import json
 from django.core.exceptions import PermissionDenied
 import wagtail
 
-if wagtail.VERSION > (2, 15):
+if wagtail.__version__ > "2.15":
     from wagtail.core.actions.move_page import MovePageAction
 
 from wagtail.core.models import Page, Site
@@ -47,7 +47,7 @@ def restore_and_move_page(rb, move_to_page, request):
     if not rb.page.permissions_for_user(request.user).can_move():
         raise PermissionDenied
 
-    if wagtail.VERSION > (2, 15):
+    if wagtail.__version__ > "2.15":
         action = MovePageAction(
             rb.page, move_to_page, pos="first-child", user=request.user
         )
