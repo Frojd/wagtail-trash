@@ -1,3 +1,5 @@
+[![Run tests, lint and publish](https://github.com/Frojd/wagtail-trash/actions/workflows/main.yml/badge.svg)](https://github.com/Frojd/wagtail-trash/actions/workflows/main.yml) [![PyPI version](https://badge.fury.io/py/wagtail-trash.svg)](https://badge.fury.io/py/wagtail-trash)
+
 # wagtail trash
 
 Instead of deleting pages when pressing delete, pages will get thrown into the "Trash Can".
