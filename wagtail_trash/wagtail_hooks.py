@@ -74,7 +74,7 @@ class TrashButtonHelper(ButtonHelper):
 
 class TrashCanIndexView(IndexView):
     def get_page_title(self):
-        return _("Trash can")
+        return _("Trash Can")
 
 
 class TrashCanModelAdmin(ModelAdmin):
