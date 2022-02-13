@@ -1,14 +1,13 @@
 import json
-from django.core.exceptions import PermissionDenied
 
+import wagtail
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext as _
 from treebeard.mp_tree import MP_MoveHandler
 from wagtail.admin import messages
 from wagtail.core.models import Page
-import wagtail
-
 
 from .forms import MoveForm
 from .models import TrashCan
