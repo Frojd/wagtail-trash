@@ -2,6 +2,7 @@ import json
 
 import wagtail
 from django.core.exceptions import PermissionDenied
+from django.utils.translation import gettext as _
 
 if wagtail.VERSION >= (2, 16):
     from wagtail.core.actions.move_page import MovePageAction
@@ -17,7 +18,7 @@ def trash_can_for_request(request):
 
     if not trash_can.exists():
         trash_can = TrashCanPage(
-            title="Trash Can",
+            title=_("Trash Can"),
             has_unpublished_changes=True,
             live=False,
         )
