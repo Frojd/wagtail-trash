@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.1
+
+- Add Wagtail 2.16 compability (Andreas Bernacca)
+- Fix: Make datetime time zone aware (Martin Sandström)
+- Fix: Add custom text for when trash can is empty
+
+
 ## 0.2.0
 
 - Add changelog (Andreas Bernacca)

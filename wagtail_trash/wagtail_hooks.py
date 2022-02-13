@@ -72,6 +72,11 @@ class TrashButtonHelper(ButtonHelper):
         return buttons
 
 
+class TrashCanIndexView(IndexView):
+    def get_page_title(self):
+        return _("Trash Can")
+
+
 class TrashCanModelAdmin(ModelAdmin):
     model = TrashCan
     menu_label = _("Trash Can")
@@ -83,6 +88,9 @@ class TrashCanModelAdmin(ModelAdmin):
 
     button_helper_class = TrashButtonHelper
     permission_helper_class = TrashPermissionHelper
+
+    index_view_class = TrashCanIndexView
+    index_template_name = "wagtail_trash/index.html"
 
     def page_tree(self, rb):
         descendants = rb.page.get_descendants(inclusive=True)

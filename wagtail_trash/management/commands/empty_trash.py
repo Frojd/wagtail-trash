@@ -1,6 +1,7 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.core.management.base import BaseCommand
+from django.utils import timezone
 
 from wagtail_trash.models import TrashCan
 
@@ -21,7 +22,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         days = int(options["older_than_days"])
 
-        removal_date = datetime.now() - timedelta(days=days)
+        removal_date = timezone.now() - timedelta(days=days)
 
         rbs = TrashCan.objects.filter(time_recycled__lt=removal_date)
 

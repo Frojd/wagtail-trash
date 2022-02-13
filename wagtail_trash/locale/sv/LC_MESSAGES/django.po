@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-12 07:57+0100\n"
-"PO-Revision-Date: 2022-02-12 08:04+0100\n"
+"POT-Creation-Date: 2022-02-13 07:53+0100\n"
+"PO-Revision-Date: 2022-02-13 07:52+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: sv\n"
@@ -47,13 +47,18 @@ msgid "Data"
 msgstr "Datum"
 
 #: wagtail_trash/models.py:28 wagtail_trash/templates/wagtail_trash/move.html:3
-#: wagtail_trash/wagtail_hooks.py:77
+#: wagtail_trash/utils.py:21 wagtail_trash/wagtail_hooks.py:77
+#: wagtail_trash/wagtail_hooks.py:82
 msgid "Trash Can"
 msgstr "Papperskorg"
 
 #: wagtail_trash/models.py:29
 msgid "Trash Cans"
 msgstr "Papperskorgar"
+
+#: wagtail_trash/templates/wagtail_trash/index.html:7
+msgid "Your trash can is empty."
+msgstr "Din papperskorg är tom."
 
 #: wagtail_trash/templates/wagtail_trash/move.html:12
 msgid "Restore page to new location"
@@ -78,17 +83,17 @@ msgstr ""
 msgid "Restore"
 msgstr "Återställ"
 
-#: wagtail_trash/views.py:37
+#: wagtail_trash/views.py:38
 #, python-brace-format
 msgid "Page '{0}' deleted."
 msgstr "Sida ‘{0}’ raderad."
 
-#: wagtail_trash/views.py:49
+#: wagtail_trash/views.py:54
 #, python-brace-format
 msgid "Page '{0}' moved to trash_can."
 msgstr "Sida ‘{0}’ flyttades to papperskorgen."
 
-#: wagtail_trash/views.py:68 wagtail_trash/views.py:95
+#: wagtail_trash/views.py:73 wagtail_trash/views.py:100
 #, python-brace-format
 msgid "Page '{0}' successfully restored."
 msgstr "Sida ‘{0}’ återställdes."
@@ -96,3 +101,8 @@ msgstr "Sida ‘{0}’ återställdes."
 #: wagtail_trash/wagtail_hooks.py:32 wagtail_trash/wagtail_hooks.py:34
 msgid "Restore and move"
 msgstr "Återställ och flytta"
+
+#, fuzzy
+#~| msgid "Trash Can"
+#~ msgid "Trash can"
+#~ msgstr "Papperskorg"
