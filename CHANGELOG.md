@@ -1,6 +1,6 @@
 # Changelog
 
-## XX.XX.XX (In development)
+## 0.2.1
 
 - Add Wagtail 2.16 compability (Andreas Bernacca)
 - Fix: Make datetime time zone aware (Martin Sandström)
