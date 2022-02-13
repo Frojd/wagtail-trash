@@ -90,6 +90,7 @@ class TrashCanModelAdmin(ModelAdmin):
     permission_helper_class = TrashPermissionHelper
 
     index_view_class = TrashCanIndexView
+    index_template_name = "wagtail_trash/index.html"
 
     def page_tree(self, rb):
         descendants = rb.page.get_descendants(inclusive=True)
