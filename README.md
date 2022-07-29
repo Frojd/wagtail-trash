@@ -38,9 +38,11 @@ Since Wagtail Trash uses the hook `before_delete_page` it might interfere with y
 Also, Wagtail Trash "deletes" pages by unpublishing them, so if you use a queryset that doesn't filter out unpublished pages, pages in trash can might show up. There is a manager that will fix this for you included, example:
 
 ```python
+from wagtail.core.models import Page, PageManager
 from wagtail_trash.managers import TrashManager
 
 class SomePage(Page):
+    objects = PageManager()  # needed, so _default_manager isn't the trash manager
     objects_excluding_trash = TrashManager()
 
 # Now you can do this without getting any pages from the bin:
