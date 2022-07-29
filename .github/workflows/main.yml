@@ -37,7 +37,7 @@ jobs:
         with:
           options: "--check --verbose --exclude=migrations"
           src: "."
-          version: "21.5b1"
+          version: "22.6.0"
 
   lint-isort:
     runs-on: ubuntu-latest
