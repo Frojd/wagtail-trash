@@ -171,7 +171,7 @@ class TestAdmin(TestCase, WagtailTestUtils):
     def test_restoring_page_preserves_old_url(self):
         from wagtail_trash.wagtail_hooks import urlconf_time
 
-        root_page = Page.objects.get(url_path="/")
+        root_page = Page.objects.get(url_path="/home/")
 
         top = Page(title="1p", has_unpublished_changes=False, live=True)
         root_page.add_child(instance=top)
@@ -182,14 +182,15 @@ class TestAdmin(TestCase, WagtailTestUtils):
         sub_page = Page(title="1p 2p", has_unpublished_changes=False, live=True)
         top.add_child(instance=sub_page)
 
-        original_top_url = top.url
+        original_top_url = top.url_path
+
         with self.register_hook("before_delete_page", trash_delete):
             delete_url = reverse("wagtailadmin_pages:delete", args=(top.id,))
             self.client.post(delete_url)
 
         top.refresh_from_db()
 
-        assert original_top_url != top.url
+        self.assertNotEqual(original_top_url, top.url_path)
 
         with self.register_hook("register_admin_urls", urlconf_time):
             restore_url = reverse("wagtail_trash_restore", args=(top.id,))
@@ -197,7 +198,7 @@ class TestAdmin(TestCase, WagtailTestUtils):
 
         top.refresh_from_db()
 
-        assert original_top_url == top.url
+        self.assertEqual(original_top_url, top.url_path)
 
     def test_restoring_page_custom_move_to(self):
         from wagtail_trash.wagtail_hooks import urlconf_time
