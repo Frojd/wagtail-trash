@@ -9,4 +9,4 @@ migrate:
 	docker-compose exec web django-admin migrate
 
 test:
-	docker-compose exec web django-admin test
+	docker-compose exec web python runtests.py

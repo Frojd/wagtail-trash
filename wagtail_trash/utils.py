@@ -4,7 +4,9 @@ import wagtail
 from django.core.exceptions import PermissionDenied
 from django.utils.translation import gettext as _
 
-if wagtail.VERSION >= (2, 16):
+if wagtail.VERSION >= (3, 0):
+    from wagtail.actions.move_page import MovePageAction
+elif wagtail.VERSION >= (2, 16):
     from wagtail.core.actions.move_page import MovePageAction
 
 from wagtail.core.models import Page, Site
