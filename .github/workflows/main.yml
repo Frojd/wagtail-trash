@@ -12,6 +12,7 @@ jobs:
         - 2.14.2
         - 2.15.1
         - 2.16.1
+        - 3.0.1
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
