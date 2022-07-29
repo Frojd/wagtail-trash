@@ -1,5 +1,5 @@
-from django.db import models
 import wagtail
+from django.db import models
 
 if wagtail.VERSION >= (3, 0):
     from wagtail.query import PageQuerySet
