@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0
+- Add Wagtail 3.0 compatibility (Thanks @polesello!)
+- Add code and tests verifying urls gets preserved when moving pages (Andreas Bernacca)
+
 ## 0.2.1
 
 - Add Wagtail 2.16 compability (Andreas Bernacca)
