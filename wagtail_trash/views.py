@@ -1,5 +1,3 @@
-import json
-
 import wagtail
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect, render

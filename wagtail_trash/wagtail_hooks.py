@@ -6,7 +6,6 @@ from wagtail.contrib.modeladmin.helpers import ButtonHelper, PermissionHelper
 from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
 from wagtail.contrib.modeladmin.views import IndexView
 from wagtail.core import hooks
-from wagtail.core.models import Page
 
 from .models import TrashCan, TrashCanPage
 from .utils import trash_can_for_request
