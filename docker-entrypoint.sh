@@ -34,7 +34,7 @@ case "$CMD" in
         wait_for_db
 
         echo Running tests
-        exec pytest --ds=pipit.settings.test
+        exec python runtests.py
         ;;
 
     * )
