@@ -11,34 +11,42 @@
 - Drop Wagtail 2.16 support
 - Drop Wagtail 2.14 support
 
-## 0.3.0
+## [0.3.0] - 2022-07-29
+### Added
 - Add Wagtail 3.0 compatibility (Thanks @polesello!)
+
+### Fixed
 - Add code and tests verifying urls gets preserved when moving pages (Andreas Bernacca)
 
-## 0.2.1
-
+## [0.2.1] - 2022-02-13
+### Added
 - Add Wagtail 2.16 compability (Andreas Bernacca)
-- Fix: Make datetime time zone aware (Martin Sandström)
-- Fix: Add custom text for when trash can is empty
+
+### Fixed
+- Make datetime time zone aware (Martin Sandström)
+- Add custom text for when trash can is empty
 
 
-## 0.2.0
-
+## [0.2.0] - 2022-02-12
+### Added
 - Add changelog (Andreas Bernacca)
 - Add translations (Alexandre Marinho)
 - Add spanish translations (Yamil Jaskolowsk)
 - Add swedish translations (Martin Sandström)
+
+### Fixed
+- Add CI/CD deployment (Martin Sandström)
+- Add Django 4.0 compability
+
+### Removed
 - Drop Wagtail <2.14 support
 - Drop Python 3.5 and 3.6 support
-- Fix: Add CI/CD deployment (Martin Sandström)
-- Fix: Add Django 4.0 compability
 
-
-## 0.1.1
-
+## [0.1.1] - 2021-06-09
+### Fixed
 - Rename template directory from the legacy name `wagtail_recycle_bin` to `wagtail_trash`. (cspollar)
 
 
-## 0.1.0
+## [0.1.0]
 
 - Initial release
