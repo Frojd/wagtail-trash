@@ -2,10 +2,15 @@ from django.shortcuts import reverse
 from django.urls import path
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
+from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.contrib.modeladmin.helpers import ButtonHelper, PermissionHelper
 from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
 from wagtail.contrib.modeladmin.views import IndexView
-from wagtail.core import hooks
+
+if WAGTAIL_VERSION >= (3, 0):
+    from wagtail import hooks
+else:
+    from wagtail.core import hooks
 
 from .models import TrashCan, TrashCanPage
 from .utils import trash_can_for_request

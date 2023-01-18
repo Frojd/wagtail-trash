@@ -1,15 +1,18 @@
 import json
 
-import wagtail
 from django.core.exceptions import PermissionDenied
 from django.utils.translation import gettext as _
+from wagtail import VERSION as WAGTAIL_VERSION
 
-if wagtail.VERSION >= (3, 0):
+if WAGTAIL_VERSION >= (3, 0):
     from wagtail.actions.move_page import MovePageAction
-elif wagtail.VERSION >= (2, 16):
+elif WAGTAIL_VERSION >= (2, 16):
     from wagtail.core.actions.move_page import MovePageAction
 
-from wagtail.core.models import Page, Site
+if WAGTAIL_VERSION >= (3, 0):
+    from wagtail.models import Page, Site
+else:
+    from wagtail.core.models import Page, Site
 
 from .models import TrashCanPage
 
@@ -51,7 +54,7 @@ def restore_and_move_page(rb, move_to_page, request):
     if not rb.page.permissions_for_user(request.user).can_move():
         raise PermissionDenied
 
-    if wagtail.VERSION >= (2, 16):
+    if WAGTAIL_VERSION >= (2, 16):
         action = MovePageAction(
             rb.page, move_to_page, pos="first-child", user=request.user
         )
