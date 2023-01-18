@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 ### Fixed
+- Add Wagtail 4 and 4.1 support (@marteinn)
 - Add python 3.11 support (@marteinn)
 - Remove wagtailadmin.W003 warning in development (@marteinn)
 - Fix incorrect test alias in docker-entrypoint.sh (@marteinn)

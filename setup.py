@@ -48,6 +48,7 @@ setup(
         "Framework :: Wagtail",
         "Framework :: Wagtail :: 2",
         "Framework :: Wagtail :: 3",
+        "Framework :: Wagtail :: 4",
         "License :: OSI Approved :: MIT License",
     ],
     project_urls={
