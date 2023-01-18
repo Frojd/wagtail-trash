@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+### Fixed
+- Add python 3.11 support (Martin Sandström)
+
 ## 0.3.0
 - Add Wagtail 3.0 compatibility (Thanks @polesello!)
 - Add code and tests verifying urls gets preserved when moving pages (Andreas Bernacca)
