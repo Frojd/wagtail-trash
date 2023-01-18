@@ -2,7 +2,8 @@
 
 ## [Unreleased]
 ### Fixed
-- Add python 3.11 support (Martin Sandström)
+- Add python 3.11 support (@marteinn)
+- Remove wagtailadmin.W003 warning in development (@marteinn)
 
 ### Removed
 - Drop Wagtail 2.16 support
