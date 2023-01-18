@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased]
+### Fixed
+- Add Wagtail 4 and 4.1 support (@marteinn)
+- Add python 3.11 support (@marteinn)
+- Remove wagtailadmin.W003 warning in development (@marteinn)
+- Fix incorrect test alias in docker-entrypoint.sh (@marteinn)
+
+### Removed
+- Drop Wagtail 2.16 support
+- Drop Wagtail 2.14 support
+
 ## 0.3.0
 - Add Wagtail 3.0 compatibility (Thanks @polesello!)
 - Add code and tests verifying urls gets preserved when moving pages (Andreas Bernacca)
