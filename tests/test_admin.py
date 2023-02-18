@@ -99,11 +99,14 @@ class TestAdmin(TestCase, WagtailTestUtils):
             self.client.post(delete_url)
             assert TrashCan.objects.count() == 1
 
-            delete_url = reverse("wagtailadmin_pages:delete", args=(new_page.id,))
+            trash_can_item = TrashCan.objects.first()
+            delete_url = trash_admin_url_helper.get_action_url(
+                "delete",
+                trash_can_item.id,
+            )
             self.client.post(delete_url)
-
-        assert not Page.objects.filter(title="delete page")
-        assert TrashCan.objects.count() == 0
+            assert not Page.objects.filter(title="delete page")
+            assert TrashCan.objects.count() == 0
 
     def test_removing_page_unpublishes_all_sub_pages(self):
         root_page = Page.objects.get(url_path="/")
