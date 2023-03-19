@@ -23,6 +23,47 @@ def get_valid_next_url_from_request(request):
     return next_url
 
 
+def trash_bulk_delete(request, pages):
+    trash_can = trash_can_for_request(request)
+
+    for page in pages:
+        parent = page.get_parent()
+
+        if parent.id == trash_can.id:
+            page.delete(user=request.user)
+
+            messages.success(
+                request, _("Page '{0}' deleted.").format(page.get_admin_display_title())
+            )
+        else:
+            TrashCan.objects.create(
+                page=page, parent=parent, user=request.user, data=generate_page_data(page)
+            )
+
+            page.get_descendants(inclusive=True).unpublish()
+
+            if wagtail.VERSION >= (2, 16):
+                # Preserve the url path
+                old_page = Page.objects.get(id=page.id)
+                new_url_path = old_page.set_url_path(parent=trash_can)
+
+                MP_MoveHandler(page, trash_can, "first-child").process()
+
+                # And reset the url path when in trash
+                new_page = Page.objects.get(id=page.id)
+                new_page.url_path = new_url_path
+                new_page.save()
+            else:
+                page.move(trash_can, pos="first-child", user=request.user)
+
+    next_url = get_valid_next_url_from_request(request)
+
+    if next_url:
+        return redirect(next_url)
+
+    return redirect("wagtailadmin_explore", parent.id)
+
+
 def trash_delete(request, page):
     if not request.method == "POST":
         return

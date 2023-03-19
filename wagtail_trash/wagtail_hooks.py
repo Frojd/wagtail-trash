@@ -10,7 +10,7 @@ from wagtail.core.models import Page
 
 from .models import TrashCan, TrashCanPage
 from .utils import trash_can_for_request
-from .views import trash_delete, trash_move, trash_restore
+from .views import trash_bulk_delete, trash_delete, trash_move, trash_restore
 
 
 class TrashPermissionHelper(PermissionHelper):
@@ -116,6 +116,14 @@ class TrashCanModelAdmin(ModelAdmin):
 
 
 modeladmin_register(TrashCanModelAdmin)
+
+
+@hooks.register("before_bulk_action")
+def delete_bulk_pages(request, action_type, objects, action_class_instance):
+    from wagtail.admin.views.pages.bulk_actions.delete import DeleteBulkAction
+
+    if action_type == "delete" and isinstance(action_class_instance, DeleteBulkAction):
+        return trash_bulk_delete(request, objects)
 
 
 @hooks.register("before_delete_page")

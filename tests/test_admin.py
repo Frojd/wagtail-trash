@@ -4,7 +4,7 @@ from wagtail.core.models import Page
 from wagtail.tests.utils import WagtailTestUtils
 
 from wagtail_trash.models import TrashCan, TrashCanPage
-from wagtail_trash.views import trash_delete
+from wagtail_trash.views import trash_bulk_delete, trash_delete
 from wagtail_trash.wagtail_hooks import TrashCanModelAdmin
 
 trash_admin_url_helper = TrashCanModelAdmin().url_helper
@@ -81,6 +81,32 @@ class TestAdmin(TestCase, WagtailTestUtils):
         assert new_page.exists()
         assert new_page.child_of(TrashCanPage.objects.first())
         assert TrashCan.objects.count() == 1
+
+    def test_bulk_delete_sends_to_trash_can(self):
+        root_page = Page.objects.get(url_path="/")
+
+        new_page1 = Page(title="new page 1")
+        new_page2 = Page(title="new page 2")
+        new_page3 = Page(title="new page 3")
+        new_page4 = Page(title="new page 4")
+
+        p1 = root_page.add_child(instance=new_page1)
+        p2 = root_page.add_child(instance=new_page2)
+        p3 = root_page.add_child(instance=new_page3)
+        p4 = root_page.add_child(instance=new_page4)
+
+        assert TrashCan.objects.count() == 0
+
+        with self.register_hook("before_bulk_action", trash_bulk_delete):
+            delete_url = reverse(
+                "wagtail_bulk_action", args=("wagtailcore", "page", "delete")
+            )
+            id_query = "?id=" + "&id=".join(
+                [str(p1.id), str(p2.id), str(p3.id), str(p4.id)]
+            )
+            self.client.post(delete_url + id_query)
+
+        assert TrashCan.objects.count() == 4
 
     def test_removing_page_from_bin_deletes_it(self):
         root_page = Page.objects.get(url_path="/")
