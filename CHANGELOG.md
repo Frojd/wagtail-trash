@@ -6,6 +6,7 @@
 - Add python 3.11 support (@marteinn)
 - Remove wagtailadmin.W003 warning in development (@marteinn)
 - Fix incorrect test alias in docker-entrypoint.sh (@marteinn)
+- Fix bug where pages deleted from trashcan was not properly deleted (@marteinn)
 
 ### Removed
 - Drop Wagtail 2.16 support

@@ -5,7 +5,7 @@ from django.utils.translation import gettext as _
 from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.contrib.modeladmin.helpers import ButtonHelper, PermissionHelper
 from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
-from wagtail.contrib.modeladmin.views import IndexView
+from wagtail.contrib.modeladmin.views import DeleteView, IndexView
 
 if WAGTAIL_VERSION >= (3, 0):
     from wagtail import hooks
@@ -81,6 +81,21 @@ class TrashCanIndexView(IndexView):
         return _("Trash Can")
 
 
+class TrashCanDeleteView(DeleteView):
+    def confirmation_message(self):
+        return _(
+            "Are you sure you want to delete this %(object)s? If other things in your "
+            "site are related to it, they may also be affected."
+        ) % {"object": _("page")}
+
+    def delete_instance(self):
+        rb = self.instance
+        page = rb.page
+
+        page.delete(user=self.request.user)
+        rb.delete()
+
+
 class TrashCanModelAdmin(ModelAdmin):
     model = TrashCan
     menu_label = _("Trash Can")
@@ -95,6 +110,8 @@ class TrashCanModelAdmin(ModelAdmin):
 
     index_view_class = TrashCanIndexView
     index_template_name = "wagtail_trash/index.html"
+
+    delete_view_class = TrashCanDeleteView
 
     def page_tree(self, rb):
         descendants = rb.page.get_descendants(inclusive=True)
