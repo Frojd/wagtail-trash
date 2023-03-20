@@ -3,13 +3,8 @@ from django.shortcuts import redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext as _
 from treebeard.mp_tree import MP_MoveHandler
-from wagtail import VERSION as WAGTAIL_VERSION
 from wagtail.admin import messages
-
-if WAGTAIL_VERSION >= (3, 0):
-    from wagtail.models import Page
-else:
-    from wagtail.core.models import Page
+from wagtail.models import Page
 
 from .forms import MoveForm
 from .models import TrashCan
@@ -46,19 +41,16 @@ def trash_delete(request, page):
 
         page.get_descendants(inclusive=True).unpublish()
 
-        if WAGTAIL_VERSION >= (2, 16):
-            # Preserve the url path
-            old_page = Page.objects.get(id=page.id)
-            new_url_path = old_page.set_url_path(parent=trash_can)
+        # Preserve the url path
+        old_page = Page.objects.get(id=page.id)
+        new_url_path = old_page.set_url_path(parent=trash_can)
 
-            MP_MoveHandler(page, trash_can, "first-child").process()
+        MP_MoveHandler(page, trash_can, "first-child").process()
 
-            # And reset the url path when in trash
-            new_page = Page.objects.get(id=page.id)
-            new_page.url_path = new_url_path
-            new_page.save()
-        else:
-            page.move(trash_can, pos="first-child", user=request.user)
+        # And reset the url path when in trash
+        new_page = Page.objects.get(id=page.id)
+        new_page.url_path = new_url_path
+        new_page.save()
 
         messages.success(
             request,

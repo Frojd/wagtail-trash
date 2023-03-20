@@ -3,14 +3,8 @@ from datetime import timedelta
 from django.core.management import call_command
 from django.test import TestCase
 from django.utils import timezone
-from wagtail import VERSION as WAGTAIL_VERSION
-
-if WAGTAIL_VERSION >= (3, 0):
-    from wagtail.models import Page
-    from wagtail.test.utils import WagtailTestUtils
-else:
-    from wagtail.core.models import Page
-    from wagtail.tests.utils import WagtailTestUtils
+from wagtail.models import Page
+from wagtail.test.utils import WagtailTestUtils
 
 from wagtail_trash.models import TrashCan, TrashCanPage
 
