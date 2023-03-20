@@ -12,10 +12,10 @@ else:
     from wagtail.core.models import Page
     from wagtail.tests.utils import WagtailTestUtils
 
-from wagtail_trash.models import TrashCan
+from wagtail_trash.models import TrashCan, TrashCanPage
 
 
-class TestManagementCommands(TestCase, WagtailTestUtils):
+class TestEmptyTrashCommand(TestCase, WagtailTestUtils):
     def test_empty_bin_removes_pages_older_than_setting(self):
         root_page = Page.objects.get(url_path="/")
 
@@ -37,3 +37,26 @@ class TestManagementCommands(TestCase, WagtailTestUtils):
         self.assertFalse(TrashCan.objects.filter(page_id=old_page.id).exists())
         self.assertTrue(TrashCan.objects.filter(page_id=new_page.id).exists())
         self.assertEqual(TrashCan.objects.count(), 1)
+
+
+class TestDeleteStraypagesCommand(TestCase, WagtailTestUtils):
+    def test_delete_stray_pages_removes_pages_from_trash_can_witout_trashcan_association(
+        self,
+    ):
+        root_page = Page.objects.get(url_path="/")
+
+        trash_can_page = TrashCanPage(title="Trash can")
+        root_page.add_child(instance=trash_can_page)
+
+        new_page = Page(title="New page")
+        trash_can_page.add_child(instance=new_page)
+        TrashCan.objects.create(page=new_page)
+
+        stray_page = Page(title="Stray page")
+        trash_can_page.add_child(instance=stray_page)
+
+        self.assertEqual(trash_can_page.get_children().count(), 2)
+
+        call_command("delete_stray_pages")
+
+        self.assertEqual(trash_can_page.get_children().count(), 1)

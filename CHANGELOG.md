@@ -1,6 +1,9 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- Add delete_stray_pages command for clearing stray pages in trash can (@marteinn)
+
 ### Fixed
 - Add Wagtail 4 and 4.1 support (@marteinn)
 - Add python 3.11 support (@marteinn)
@@ -11,6 +14,9 @@
 ### Removed
 - Drop Wagtail 2.16 support
 - Drop Wagtail 2.14 support
+
+## Upgrade considerations
+- Due to a bug in delete pages are not properly removed, this was fixed in X.X.X. Run `python manage.py delete_stray_pages` to fix this
 
 ## [0.3.0] - 2022-07-29
 ### Added
