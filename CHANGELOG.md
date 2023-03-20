@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Add delete_stray_pages command for clearing stray pages in trash can (@marteinn)
+- Add support for moving deleted pages to trash can when using bulk actions (@rinti)
 
 ### Fixed
 - Add Wagtail 4 and 4.1 support (@marteinn)
