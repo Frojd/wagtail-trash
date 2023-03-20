@@ -39,19 +39,16 @@ def trash_bulk_delete(request, pages):
 
             page.get_descendants(inclusive=True).unpublish()
 
-            if wagtail.VERSION >= (2, 16):
-                # Preserve the url path
-                old_page = Page.objects.get(id=page.id)
-                new_url_path = old_page.set_url_path(parent=trash_can)
+            # Preserve the url path
+            old_page = Page.objects.get(id=page.id)
+            new_url_path = old_page.set_url_path(parent=trash_can)
 
-                MP_MoveHandler(page, trash_can, "first-child").process()
+            MP_MoveHandler(page, trash_can, "first-child").process()
 
-                # And reset the url path when in trash
-                new_page = Page.objects.get(id=page.id)
-                new_page.url_path = new_url_path
-                new_page.save()
-            else:
-                page.move(trash_can, pos="first-child", user=request.user)
+            # And reset the url path when in trash
+            new_page = Page.objects.get(id=page.id)
+            new_page.url_path = new_url_path
+            new_page.save()
 
     next_url = get_valid_next_url_from_request(request)
 
