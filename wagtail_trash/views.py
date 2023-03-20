@@ -34,7 +34,10 @@ def trash_bulk_delete(request, pages):
             )
         else:
             TrashCan.objects.create(
-                page=page, parent=parent, user=request.user, data=generate_page_data(page)
+                page=page,
+                parent=parent,
+                user=request.user,
+                data=generate_page_data(page),
             )
 
             page.get_descendants(inclusive=True).unpublish()
