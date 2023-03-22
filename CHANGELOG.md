@@ -6,15 +6,15 @@
 - Add support for moving deleted pages to trash can when using bulk actions (@rinti)
 
 ### Fixed
-- Add Wagtail 4 and 4.1 support (@marteinn)
+- Add Wagtail 4.1 and 4.2 support (@marteinn)
 - Add python 3.11 support (@marteinn)
 - Remove wagtailadmin.W003 warning in development (@marteinn)
 - Fix incorrect test alias in docker-entrypoint.sh (@marteinn)
 - Fix bug where pages deleted from trashcan was not properly deleted (@marteinn)
 
 ### Removed
-- Drop Wagtail 2.16 support
-- Drop Wagtail 2.14 support
+- Drop Wagtail 2 support
+- Drop Wagtail 3 support
 
 ## Upgrade considerations
 - Due to a bug in delete pages are not properly removed, this was fixed in X.X.X. Run `python manage.py delete_stray_pages` to fix this
