@@ -19,7 +19,7 @@ setup(
     author="Andreas Bernacca",
     author_email="ante.bernacca@gmail.com",
     install_requires=[
-        "wagtail>=2.14",
+        "wagtail>=4.1",
     ],
     extras_require={
         "testing": testing_extras,
@@ -40,13 +40,13 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Framework :: Django",
         "Framework :: Django :: 2.2",
         "Framework :: Django :: 3.2",
         "Framework :: Django :: 4.0",
         "Framework :: Wagtail",
-        "Framework :: Wagtail :: 2",
-        "Framework :: Wagtail :: 3",
+        "Framework :: Wagtail :: 4",
         "License :: OSI Approved :: MIT License",
     ],
     project_urls={

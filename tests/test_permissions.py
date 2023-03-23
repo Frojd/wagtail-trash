@@ -2,8 +2,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.shortcuts import reverse
 from django.test import TestCase
-from wagtail.core.models import GroupPagePermission, Page
-from wagtail.tests.utils import WagtailTestUtils
+from wagtail.models import GroupPagePermission, Page
+from wagtail.test.utils import WagtailTestUtils
 
 from wagtail_trash.models import TrashCan, TrashCanPage
 from wagtail_trash.views import trash_delete

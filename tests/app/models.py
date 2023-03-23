@@ -1,4 +1,4 @@
-from wagtail.core.models import Page, PageManager
+from wagtail.models import Page, PageManager
 
 from wagtail_trash.managers import TrashManager
 

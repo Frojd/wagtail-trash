@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     "wagtail.documents",
     "wagtail.images",
     "wagtail.admin",
-    "wagtail.core",
+    "wagtail",
 ]
 
 ROOT_URLCONF = "tests.app.urls"
@@ -80,3 +80,5 @@ TEMPLATES = [
         },
     },
 ]
+
+WAGTAILADMIN_BASE_URL = "http://localhost:8080"
