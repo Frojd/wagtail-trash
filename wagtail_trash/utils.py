@@ -1,4 +1,5 @@
 import json
+import re
 
 from django.core.exceptions import PermissionDenied
 from django.utils.translation import gettext as _
@@ -44,6 +45,9 @@ def generate_page_data(page):
 def restore_and_move_page(rb, move_to_page, request):
     if not rb.page.permissions_for_user(request.user).can_move():
         raise PermissionDenied
+
+    rb.page.slug = re.sub(r"trash-\d+-", "", rb.page.slug)
+    rb.page.save()
 
     action = MovePageAction(rb.page, move_to_page, pos="first-child", user=request.user)
     action.execute(skip_permission_checks=True)

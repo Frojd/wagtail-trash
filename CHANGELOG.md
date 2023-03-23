@@ -11,6 +11,7 @@
 - Remove wagtailadmin.W003 warning in development (@marteinn)
 - Fix incorrect test alias in docker-entrypoint.sh (@marteinn)
 - Fix bug where pages deleted from trashcan was not properly deleted (@marteinn)
+- Fix bug where two pages with the same slug couldn't be in the trash can at the same time (@rinti)
 
 ### Removed
 - Drop Wagtail 2 support

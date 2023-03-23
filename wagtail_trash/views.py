@@ -40,6 +40,8 @@ def trash_bulk_delete(request, pages):
                 data=generate_page_data(page),
             )
 
+            page.slug = f"trash-{page.id}-{page.slug}"
+            page.save()
             page.get_descendants(inclusive=True).unpublish()
 
             # Preserve the url path
@@ -80,6 +82,8 @@ def trash_delete(request, page):
             page=page, parent=parent, user=request.user, data=generate_page_data(page)
         )
 
+        page.slug = f"trash-{page.id}-{page.slug}"
+        page.save()
         page.get_descendants(inclusive=True).unpublish()
 
         # Preserve the url path
