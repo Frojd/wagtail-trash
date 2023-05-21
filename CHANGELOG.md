@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 ### Added
+- Add Wagtail 5 support
+
 ### Changed
 ### Fixed
 ### Removed
