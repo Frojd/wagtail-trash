@@ -6,6 +6,10 @@
 ### Fixed
 ### Removed
 
+## [1.0.1] - 2023-05-21
+### Added
+- Add Wagtail 5 support (@marteinn)
+
 ## [1.0.0] - 2023-03-23
 ### Added
 - Add delete_stray_pages command for clearing stray pages in trash can (@marteinn)
