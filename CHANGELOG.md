@@ -4,6 +4,8 @@
 ### Added
 ### Changed
 ### Fixed
+- Upgrade python version in example environment and resolve build issues
+
 ### Removed
 - Drop EOL Python 3.7 support (@marteinn)
 
