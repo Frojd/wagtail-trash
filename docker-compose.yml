@@ -12,6 +12,7 @@ services:
       - "./wagtail_trash:/srv/wagtail_trash"
       - "./settings_dev.py:/srv/settings_dev.py"
       - "./manage.py:/srv/manage.py"
+      - "./runtests.py:/srv/runtests.py"
     working_dir: /srv
     environment:
       - DATABASE_HOST=db

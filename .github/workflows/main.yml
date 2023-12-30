@@ -22,10 +22,17 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         python -m pip install .[testing]
+        python -m pip install wagtail-modeladmin
         pip install -q wagtail==${{ matrix.wagtail-version }}
     - name: Run tests
       run: |
         python runtests.py
+    - name: Run tests with wagtail-modeladmin
+      run: |
+        python runtests.py
+      env:
+        DJANGO_SETTINGS_MODULE: tests.app.settings_with_wagtail_modeladmin
+
 
   lint-black:
     runs-on: ubuntu-latest
