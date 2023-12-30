@@ -5,6 +5,7 @@
 - Add Python 3.12 support (@marteinn)
 - Add Wagtail 5.1 support (@marteinn)
 - Add Wagtail 5.2 support (@marteinn)
+- Add wagtail-modeladmin support (@marteinn)
 
 ### Changed
 ### Fixed
