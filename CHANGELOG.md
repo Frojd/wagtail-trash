@@ -2,12 +2,17 @@
 
 ## [Unreleased]
 ### Added
+### Changed
+### Fixed
+### Removed
+
+## [2.0.0] - 2023-12-30
+### Added
 - Add Python 3.12 support (@marteinn)
 - Add Wagtail 5.1 support (@marteinn)
 - Add Wagtail 5.2 support (@marteinn)
 - Add wagtail-modeladmin support (@marteinn)
 
-### Changed
 ### Fixed
 - Upgrade python version in example environment and resolve build issues
 - Replace deprecated assertEquals with assertEqual
