@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 ### Added
+- Add Python 3.12 support (@marteinn)
+
 ### Changed
 ### Fixed
 - Upgrade python version in example environment and resolve build issues
