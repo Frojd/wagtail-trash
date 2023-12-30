@@ -9,6 +9,7 @@
 ### Fixed
 - Upgrade python version in example environment and resolve build issues
 - Replace deprecated assertEquals with assertEqual
+- Upgrade github actions (@marteinn)
 
 ### Removed
 - Drop EOL Python 3.7 support (@marteinn)
