@@ -68,7 +68,7 @@ class TestPermissions(TestCase, WagtailTestUtils):
     #     resp = self.client.get(index_url)
     #     html = str(resp.content)
 
-    #     self.assertEquals(html.count("data-object-pk"), 0)
+    #     self.assertEqual(html.count("data-object-pk"), 0)
 
     #     with self.register_hook("before_delete_page", trash_delete):
     #         delete_url = reverse("wagtailadmin_pages:delete", args=(self.top_page.id,))
@@ -78,4 +78,4 @@ class TestPermissions(TestCase, WagtailTestUtils):
     #     html = str(resp.content)
     #     print(html)
 
-    #     self.assertEquals(html.count("data-object-pk"), 1)
+    #     self.assertEqual(html.count("data-object-pk"), 1)
