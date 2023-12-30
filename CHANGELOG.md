@@ -15,6 +15,7 @@
 ### Removed
 - Drop EOL Python 3.7 support (@marteinn)
 - Drop EOL Wagtail 4.2 support (@marteinn)
+- Drop EOL Wagtail 5.0 support (@marteinn)
 
 ## [1.0.1] - 2023-05-21
 ### Added
