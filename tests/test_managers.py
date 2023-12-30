@@ -4,9 +4,7 @@ from wagtail.models import Page
 from wagtail.test.utils import WagtailTestUtils
 
 from tests.app.models import TestPage
-from wagtail_trash.models import TrashCan, TrashCanPage
 from wagtail_trash.views import trash_delete
-from wagtail_trash.wagtail_hooks import TrashCanModelAdmin
 
 
 class TestManagers(TestCase, WagtailTestUtils):
