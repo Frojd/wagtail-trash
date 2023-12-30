@@ -4,7 +4,9 @@ import sys
 
 from django.core.management import execute_from_command_line
 
-os.environ["DJANGO_SETTINGS_MODULE"] = "tests.app.settings"
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tests.app.settings")
+
+print("Using settings: {}".format(os.environ["DJANGO_SETTINGS_MODULE"]))
 
 
 def runtests():
