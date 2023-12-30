@@ -6,6 +6,23 @@
 ### Fixed
 ### Removed
 
+## [2.0.0] - 2023-12-30
+### Added
+- Add Python 3.12 support (@marteinn)
+- Add Wagtail 5.1 support (@marteinn)
+- Add Wagtail 5.2 support (@marteinn)
+- Add wagtail-modeladmin support (@marteinn)
+
+### Fixed
+- Upgrade python version in example environment and resolve build issues
+- Replace deprecated assertEquals with assertEqual
+- Upgrade github actions (@marteinn)
+
+### Removed
+- Drop EOL Python 3.7 support (@marteinn)
+- Drop EOL Wagtail 4.2 support (@marteinn)
+- Drop EOL Wagtail 5.0 support (@marteinn)
+
 ## [1.0.1] - 2023-05-21
 ### Added
 - Add Wagtail 5 support (@marteinn)

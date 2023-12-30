@@ -2,7 +2,7 @@ from tests.app.settings import *  # noqa
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "ENGINE": "django.db.backends.postgresql",
         "HOST": "db",
         "NAME": "postgres",
         "USER": "postgres",

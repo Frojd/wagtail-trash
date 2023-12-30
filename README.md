@@ -7,10 +7,10 @@ Instead of deleting pages when pressing delete, pages will get thrown into the "
 
 ## Install
 
-First install the python package:
+1. First install the python package:
 `pip install wagtail-trash`
 
-Then add it to your `INSTALLED_APPS`:
+2. Then add it to your `INSTALLED_APPS`:
 
 ```python
 INSTALLED_APPS = [
@@ -20,7 +20,17 @@ INSTALLED_APPS = [
 ]
 ```
 
-Run migrations, et voila!
+If you are using [wagtail-modeladmin](https://github.com/wagtail-nest/wagtail-modeladmin/) then use `"wagtail_modeladmin"` instead of `"wagtail.contrib.modeladmin"`. like this:
+
+```python
+INSTALLED_APPS = [
+    # ...
+    "wagtail_modeladmin",
+    "wagtail_trash",
+]
+```
+
+3. Run migrations, et voila!
 
 
 ## How it works

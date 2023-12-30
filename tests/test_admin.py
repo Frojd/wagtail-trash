@@ -19,7 +19,7 @@ class TestAdmin(TestCase, WagtailTestUtils):
 
         assert TrashCanPage.objects.count() == 0
 
-        resp = self.client.get(index_url)
+        self.client.get(index_url)
 
         assert TrashCanPage.objects.count() == 1
 
@@ -165,9 +165,9 @@ class TestAdmin(TestCase, WagtailTestUtils):
         cat_instance_2 = root_page.add_child(instance=cat_2)
 
         delete = Page(title="delete", slug="delete")
-        delete_instance = cat_instance.add_child(instance=delete)
+        cat_instance.add_child(instance=delete)
         delete_2 = Page(title="delete", slug="delete")
-        delete_instance_2 = cat_instance_2.add_child(instance=delete_2)
+        cat_instance_2.add_child(instance=delete_2)
 
         with self.register_hook("before_delete_page", trash_delete):
             delete_url = reverse("wagtailadmin_pages:delete", args=(delete.id,))
@@ -188,7 +188,6 @@ class TestAdmin(TestCase, WagtailTestUtils):
 
         sub_page = Page(title="1p 2p", has_unpublished_changes=False, live=True)
         top.add_child(instance=sub_page)
-        sub_page_id = sub_page.id
 
         sub_sub_page = Page(title="1p 2p 3u", has_unpublished_changes=True, live=False)
         sub_page.add_child(instance=sub_sub_page)
@@ -218,7 +217,6 @@ class TestAdmin(TestCase, WagtailTestUtils):
 
         sub_page = Page(title="1p 2p", has_unpublished_changes=False, live=True)
         top.add_child(instance=sub_page)
-        sub_page_id = sub_page.id
 
         sub_sub_page = Page(title="1p 2p 3u", has_unpublished_changes=True, live=False)
         sub_page.add_child(instance=sub_sub_page)

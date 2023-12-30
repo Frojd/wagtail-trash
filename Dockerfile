@@ -1,4 +1,4 @@
-FROM python:3.8-slim
+FROM python:3.12-slim
 
 WORKDIR /srv
 
@@ -14,12 +14,12 @@ ENV PYTHONUNBUFFERED=1 \
 COPY . /srv/
 
 RUN apt-get update \
-        && apt-get install -y netcat \
+        && apt-get install -y netcat-traditional \
         binutils libproj-dev \
         gettext libpq-dev build-essential \
         --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
-RUN pip install psycopg2-binary~=2.8.0  -e .
+RUN pip install psycopg2-binary -e .
 
 ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD ["runserver"]
