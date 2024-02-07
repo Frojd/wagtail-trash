@@ -3,9 +3,16 @@ from django.urls import path
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from wagtail import hooks
-from wagtail.contrib.modeladmin.helpers import ButtonHelper, PermissionHelper
-from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
-from wagtail.contrib.modeladmin.views import DeleteView, IndexView
+
+try:
+    from wagtail_modeladmin.helpers import ButtonHelper, PermissionHelper
+    from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
+    from wagtail_modeladmin.views import DeleteView, IndexView
+except ImportError:
+    from wagtail.contrib.modeladmin.helpers import ButtonHelper, PermissionHelper
+    from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
+    from wagtail.contrib.modeladmin.views import DeleteView, IndexView
+
 
 from .models import TrashCan, TrashCanPage
 from .utils import trash_can_for_request
