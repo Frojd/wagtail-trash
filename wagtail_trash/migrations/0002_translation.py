@@ -9,38 +9,54 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('wagtailcore', '0062_comment_models_and_pagesubscription'),
-        ('wagtail_trash', '0001_initial'),
+        ("wagtailcore", "0062_comment_models_and_pagesubscription"),
+        ("wagtail_trash", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='trashcan',
-            options={'verbose_name': 'Trash Can', 'verbose_name_plural': 'Trash Cans'},
+            name="trashcan",
+            options={"verbose_name": "Trash Can", "verbose_name_plural": "Trash Cans"},
         ),
         migrations.AlterField(
-            model_name='trashcan',
-            name='data',
-            field=models.TextField(blank=True, verbose_name='Data'),
+            model_name="trashcan",
+            name="data",
+            field=models.TextField(blank=True, verbose_name="Data"),
         ),
         migrations.AlterField(
-            model_name='trashcan',
-            name='page',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='wagtailcore.page', verbose_name='Page'),
+            model_name="trashcan",
+            name="page",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="+",
+                to="wagtailcore.page",
+                verbose_name="Page",
+            ),
         ),
         migrations.AlterField(
-            model_name='trashcan',
-            name='parent',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='wagtailcore.page', verbose_name='Parent'),
+            model_name="trashcan",
+            name="parent",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="+",
+                to="wagtailcore.page",
+                verbose_name="Parent",
+            ),
         ),
         migrations.AlterField(
-            model_name='trashcan',
-            name='time_recycled',
-            field=models.DateTimeField(auto_now_add=True, verbose_name='Time Recycled'),
+            model_name="trashcan",
+            name="time_recycled",
+            field=models.DateTimeField(auto_now_add=True, verbose_name="Time Recycled"),
         ),
         migrations.AlterField(
-            model_name='trashcan',
-            name='user',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL, verbose_name='User'),
+            model_name="trashcan",
+            name="user",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="User",
+            ),
         ),
     ]

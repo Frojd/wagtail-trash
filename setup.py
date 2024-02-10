@@ -20,6 +20,7 @@ setup(
     author_email="ante.bernacca@gmail.com",
     install_requires=[
         "wagtail>=4.1",
+        "wagtail-modeladmin",
     ],
     extras_require={
         "testing": testing_extras,
@@ -43,12 +44,11 @@ setup(
         "Programming Language :: Python :: 3.12",
         "Framework :: Django",
         "Framework :: Django :: 3.2",
-        "Framework :: Django :: 4.0",
-        "Framework :: Django :: 4.1",
         "Framework :: Django :: 4.2",
+        "Framework :: Django :: 5.0",
         "Framework :: Wagtail",
-        "Framework :: Wagtail :: 4",
         "Framework :: Wagtail :: 5",
+        "Framework :: Wagtail :: 6",
         "License :: OSI Approved :: MIT License",
     ],
     project_urls={
