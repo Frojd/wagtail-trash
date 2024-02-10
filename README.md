@@ -10,17 +10,9 @@ Instead of deleting pages when pressing delete, pages will get thrown into the "
 1. First install the python package:
 `pip install wagtail-trash`
 
-2. Then add it to your `INSTALLED_APPS`:
+This step will install both `wagtail-trash` and `wagtail-modeladmin` which is a requirement for the admin.
 
-```python
-INSTALLED_APPS = [
-    # ...
-    "wagtail.contrib.modeladmin",  # Wagtail Trash makes use of ModelAdmin, it needs to be installed.
-    "wagtail_trash",
-]
-```
-
-If you are using [wagtail-modeladmin](https://github.com/wagtail-nest/wagtail-modeladmin/) then use `"wagtail_modeladmin"` instead of `"wagtail.contrib.modeladmin"`. like this:
+2. Then add both `wagtail-trash` and `wagtail-modeladmin` to your `INSTALLED_APPS`:
 
 ```python
 INSTALLED_APPS = [
