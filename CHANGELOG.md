@@ -3,6 +3,8 @@
 ## [Unreleased]
 ### Added
 ### Changed
+- Set Wagtail 5.2 as min version
+
 ### Fixed
 ### Removed
 

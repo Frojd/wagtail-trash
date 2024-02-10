@@ -19,7 +19,7 @@ setup(
     author="Andreas Bernacca",
     author_email="ante.bernacca@gmail.com",
     install_requires=[
-        "wagtail>=4.1",
+        "wagtail>=5.2",
         "wagtail-modeladmin",
     ],
     extras_require={
