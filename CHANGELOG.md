@@ -2,9 +2,16 @@
 
 ## [Unreleased]
 ### Added
+- Add Wagtail 6 support (@marteinn)
+
 ### Changed
+- Add wagtail-modeladmin as a dependency (@marteinn)
+
 ### Fixed
 ### Removed
+- Drop EOL Wagtail 4.1 support (@marteinn)
+- Drop EOL Wagtail 5.1 support (@marteinn)
+
 
 ## [2.0.0] - 2023-12-30
 ### Added
