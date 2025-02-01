@@ -10,6 +10,7 @@
 ### Fixed
 ### Removed
 - Drop EOL python 8 (@marteinn)
+- Drop Django 3.2 support (@marteinn)
 
 ## [3.0.0] - 2024-02-10
 ### Added
