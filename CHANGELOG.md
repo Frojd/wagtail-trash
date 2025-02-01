@@ -2,17 +2,23 @@
 
 ## [Unreleased]
 ### Added
+### Changed
+### Fixed
+### Removed
+
+## [3.1.0] - 2025-02-01
+### Added
 - Add Wagtail 6.2 and 6.3 support (@marteinn)
 - Add python 3.13 support (@marteinn)
 
 ### Changed
-- Set Wagtail 5.2 as min version
+- Set Wagtail 5.2 as min version (@marteinn)
 
 ### Fixed
 - Add form validation before moving page (@marteinn)
 
 ### Removed
-- Drop EOL python 8 (@marteinn)
+- Drop EOL python 3.8 (@marteinn)
 - Drop Django 3.2 support (@marteinn)
 
 ## [3.0.0] - 2024-02-10
