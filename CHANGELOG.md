@@ -2,11 +2,14 @@
 
 ## [Unreleased]
 ### Added
+- Add python 3.13 support (@marteinn)
+
 ### Changed
 - Set Wagtail 5.2 as min version
 
 ### Fixed
 ### Removed
+- Drop EOL python 8 (@marteinn)
 
 ## [3.0.0] - 2024-02-10
 ### Added
