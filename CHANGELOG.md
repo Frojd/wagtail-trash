@@ -9,6 +9,8 @@
 - Set Wagtail 5.2 as min version
 
 ### Fixed
+- Add form validation before moving page (@marteinn)
+
 ### Removed
 - Drop EOL python 8 (@marteinn)
 - Drop Django 3.2 support (@marteinn)

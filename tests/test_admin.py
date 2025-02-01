@@ -309,6 +309,31 @@ class TestAdmin(TestCase, WagtailTestUtils):
 
         self.assertEqual(TrashCan.objects.count(), 0)
 
+    def test_restoring_page_custom_move_to_without_id_returns_validation_error(self):
+        from wagtail_trash.wagtail_hooks import urlconf_time
+
+        root_page = Page.objects.get(url_path="/")
+
+        top = Page(title="1p", has_unpublished_changes=False, live=True)
+        root_page.add_child(instance=top)
+
+        sub_page = Page(title="1p 1u", has_unpublished_changes=True, live=False)
+        top.add_child(instance=sub_page)
+
+        with self.register_hook("before_delete_page", trash_delete):
+            delete_url = reverse("wagtailadmin_pages:delete", args=(sub_page.id,))
+            self.client.post(delete_url)
+
+        sub_page.refresh_from_db()
+
+        with self.register_hook("register_admin_urls", urlconf_time):
+            restore_url = reverse(
+                "wagtail_trash_move",
+                args=(sub_page.id,),
+            )
+            response = self.client.post(restore_url, {"move_page": ""})
+            self.assertIn("This field is required", str(response.content))
+
     def test_move_view_renders(self):
         from wagtail_trash.wagtail_hooks import urlconf_time
 
