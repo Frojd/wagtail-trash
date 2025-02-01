@@ -112,6 +112,16 @@ def trash_delete(request, page):
 
 def trash_move(request, page_id):
     if request.method == "POST":
+        form = MoveForm(data=request.POST)
+        if not form.is_valid():
+            return render(
+                request,
+                "wagtail_trash/move.html",
+                {
+                    "form": form,
+                },
+            )
+
         rb = TrashCan.objects.get(page_id=page_id)
         move_to_page = Page.objects.get(pk=request.POST.get("move_page"))
         restore_and_move_page(rb, move_to_page, request)
