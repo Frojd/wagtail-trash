@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 ### Added
+- Add Wagtail 6.2 and 6.3 support (@marteinn)
 - Add python 3.13 support (@marteinn)
 
 ### Changed
