@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 ### Added
+- Add support for Wagtail 7.0 and 7.1 (@marteinn)
+
 ### Changed
 ### Fixed
 - Bump postgres version to 15 in local dev environment (@marteinn)
