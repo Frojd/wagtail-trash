@@ -5,6 +5,8 @@
 ### Changed
 ### Fixed
 ### Removed
+- Drop support for Wagtail 5.2 (@marteinn)
+- Drop support for Wagtail 6.2 (@marteinn)
 
 ## [3.1.0] - 2025-02-01
 ### Added

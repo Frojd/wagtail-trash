@@ -19,7 +19,7 @@ setup(
     author="Andreas Bernacca",
     author_email="ante.bernacca@gmail.com",
     install_requires=[
-        "wagtail>=5.2",
+        "wagtail>=6.3",
         "wagtail-modeladmin",
     ],
     extras_require={
@@ -47,7 +47,6 @@ setup(
         "Framework :: Django :: 5.0",
         "Framework :: Django :: 5.1",
         "Framework :: Wagtail",
-        "Framework :: Wagtail :: 5",
         "Framework :: Wagtail :: 6",
         "License :: OSI Approved :: MIT License",
     ],
