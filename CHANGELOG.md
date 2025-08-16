@@ -4,6 +4,8 @@
 ### Added
 ### Changed
 ### Fixed
+- Bump postgres version to 15 in local dev environment (@marteinn)
+
 ### Removed
 - Drop support for Wagtail 5.2 (@marteinn)
 - Drop support for Wagtail 6.2 (@marteinn)
