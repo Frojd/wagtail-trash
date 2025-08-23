@@ -32,3 +32,6 @@ class TrashCan(models.Model):
 class TrashCanPage(Page):
     parent_page_types = []
     subpage_types = []
+
+    def get_sitemap_urls(self, request=None):
+        return []
