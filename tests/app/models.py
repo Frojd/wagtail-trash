@@ -1,13 +1,14 @@
 from wagtail.models import Page, PageManager
 
 from wagtail_trash.managers import TrashManager
+from wagtail_trash.mixins import SkipSitemapIfInTrashMixin
 
 
-class TestPage(Page):
+class TestPage(SkipSitemapIfInTrashMixin, Page):
     objects = PageManager()
     objects_excluding_bins = TrashManager()
 
 
-class OtherPage(Page):
+class OtherPage(SkipSitemapIfInTrashMixin, Page):
     objects = PageManager()
     objects_excluding_bins = TrashManager()

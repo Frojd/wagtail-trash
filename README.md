@@ -33,14 +33,31 @@ From the trash can in Wagtail admin it's then possible to permanently delete the
 If the parent of the deleted page is either in the trash can or permanently deleted it's still possible to restore the pages by supplying an alternate parent.
 
 
-## Caveats
+## Usage
 
+### App order
 Since Wagtail Trash uses the hook `before_delete_page` it might interfere with your applications `before_delete_page` if you have defined one that returns a status code. Make sure wagtail trash is the last hook that runs otherwise or your custom `before_delete_page` might not run since Wagtail Trash doesn't call it.
 
+```python
+# Example
+INSTALLED_APPS = [
+    "wagtail.sites",
+    "wagtail",
+    "wagtail.contrib.forms",
+    "wagtail.contrib.redirects",
+    "wagtail_modeladmin",
+    "wagtail.contrib.routable_page",
+    "wagtail.contrib.settings",
+    "wagtail_trash",  # Import here
+    ...
+]
+```
+
+### Page manager
 Also, Wagtail Trash "deletes" pages by unpublishing them, so if you use a queryset that doesn't filter out unpublished pages, pages in trash can might show up. There is a manager that will fix this for you included, example:
 
 ```python
-from wagtail.core.models import Page, PageManager
+from wagtail.models import Page, PageManager
 from wagtail_trash.managers import TrashManager
 
 class SomePage(Page):
@@ -51,7 +68,19 @@ class SomePage(Page):
 SomePage.objects_excluding_trash.all()
 ```
 
-Permissions: If you remove a page under a restricted area, this page will be moved and therefore get new permissions. A user might go from not being allowed to see pages under e.g. "Secret Page", but when a page under this area is moved to trash can, the permissions from "Secret Page" are gone so now the user will see it in the trash can.
+### Exclude from sitemap
+Add SkipSitemapIfInTrashMixin if you want trashed pages to be excluded from sitemap.
+
+```python
+from wagtail.models import Page
+from wagtail_trash.mixins import SkipSitemapIfInTrashMixin
+
+class SomePage(SkipSitemapIfInTrashMixin, Page):
+    ...
+```
+
+### Permissions
+If you remove a page under a restricted area, this page will be moved and therefore get new permissions. A user might go from not being allowed to see pages under e.g. "Secret Page", but when a page under this area is moved to trash can, the permissions from "Secret Page" are gone so now the user will see it in the trash can.
 This is a solvable issue and will be fixed in a later version.
 
 

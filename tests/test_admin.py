@@ -3,6 +3,7 @@ from django.test import TestCase
 from wagtail.models import Page
 from wagtail.test.utils import WagtailTestUtils
 
+from tests.app.models import TestPage
 from wagtail_trash.models import TrashCan, TrashCanPage
 from wagtail_trash.views import trash_bulk_delete, trash_delete
 from wagtail_trash.wagtail_hooks import TrashCanModelAdmin
@@ -81,6 +82,22 @@ class TestAdmin(TestCase, WagtailTestUtils):
         assert new_page.exists()
         assert new_page.child_of(TrashCanPage.objects.first())
         assert TrashCan.objects.count() == 1
+
+    def test_trash_can_and_children_are_not_indexed_in_sitemap(self):
+        root_page = Page.objects.get(url_path="/")
+
+        new_page = TestPage(title="new page")
+        root_page.add_child(instance=new_page)
+
+        assert len(new_page.get_sitemap_urls()) != 0
+
+        with self.register_hook("before_delete_page", trash_delete):
+            delete_url = reverse("wagtailadmin_pages:delete", args=(new_page.id,))
+            self.client.post(delete_url)
+
+        trash_can_page = TrashCanPage.objects.first()
+        assert len(trash_can_page.get_sitemap_urls()) == 0
+        assert len(new_page.get_sitemap_urls()) == 0
 
     def test_bulk_delete_sets_and_unsets_slug(self):
         from wagtail_trash.wagtail_hooks import urlconf_time
