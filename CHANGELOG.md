@@ -10,6 +10,7 @@
 ### Fixed
 - Bump postgres version to 15 in local dev environment (@marteinn)
 - Use python 3.13 when running linting/publish in CI (@marteinn)
+- Update usage examples (@marteinn)
 
 ### Removed
 - Drop support for Wagtail 5.2 (@marteinn)
