@@ -5,6 +5,7 @@
 - Add support for Wagtail 7.0 and 7.1 (@marteinn)
 - Make it possible to exclude pages in trash from sitemap using SkipSitemapIfInTrashMixin (@marteinn)
 - Exclude TrashCanPage from sitemap (@marteinn)
+- Add support for Django 5.2 (@marteinn)
 
 ### Changed
 ### Fixed
@@ -15,6 +16,7 @@
 ### Removed
 - Drop support for Wagtail 5.2 (@marteinn)
 - Drop support for Wagtail 6.2 (@marteinn)
+- Drop support for Django 5.0 (@marteinn)
 
 ## [3.1.0] - 2025-02-01
 ### Added
