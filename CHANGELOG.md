@@ -3,6 +3,8 @@
 ## [Unreleased]
 ### Added
 - Add support for Wagtail 7.0 and 7.1 (@marteinn)
+- Make it possible to exclude pages in trash from sitemap using SkipSitemapIfInTrashMixin (@marteinn)
+- Exclude TrashCanPage from sitemap (@marteinn)
 
 ### Changed
 ### Fixed
