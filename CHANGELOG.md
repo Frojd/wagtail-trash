@@ -2,12 +2,17 @@
 
 ## [Unreleased]
 ### Added
+### Changed
+### Fixed
+### Removed
+
+## [3.2.0] - 2025-08-23
+### Added
 - Add support for Wagtail 7.0 and 7.1 (@marteinn)
 - Make it possible to exclude pages in trash from sitemap using SkipSitemapIfInTrashMixin (@marteinn)
 - Exclude TrashCanPage from sitemap (@marteinn)
 - Add support for Django 5.2 (@marteinn)
 
-### Changed
 ### Fixed
 - Bump postgres version to 15 in local dev environment (@marteinn)
 - Use python 3.13 when running linting/publish in CI (@marteinn)
