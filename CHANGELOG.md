@@ -3,8 +3,13 @@
 ## [Unreleased]
 ### Added
 ### Changed
+- Add support for Wagtail 7.4
+- Require wagtail-modeladmin 2.3 or newer (@marteinn)
+- Require wagtail-factories 4.3 or newer for testing (@marteinn)
+
 ### Fixed
 ### Removed
+- Drop support for Wagtail versions below 7.0 (@marteinn)
 
 ## [3.2.0] - 2025-08-23
 ### Added

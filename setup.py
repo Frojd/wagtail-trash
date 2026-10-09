@@ -8,7 +8,7 @@ with open("wagtail_trash/version.py", "r") as f:
 with open("README.md", "r") as f:
     readme = f.read()
 
-testing_extras = ["black", "wagtail-factories"]
+testing_extras = ["black", "wagtail-factories>=4.3"]
 
 setup(
     name="wagtail-trash",
@@ -19,8 +19,8 @@ setup(
     author="Andreas Bernacca",
     author_email="ante.bernacca@gmail.com",
     install_requires=[
-        "wagtail>=6.3",
-        "wagtail-modeladmin",
+        "wagtail>=7.0",
+        "wagtail-modeladmin>=2.3",
     ],
     extras_require={
         "testing": testing_extras,
@@ -47,7 +47,6 @@ setup(
         "Framework :: Django :: 5.1",
         "Framework :: Django :: 5.2",
         "Framework :: Wagtail",
-        "Framework :: Wagtail :: 6",
         "Framework :: Wagtail :: 7",
         "License :: OSI Approved :: MIT License",
     ],
