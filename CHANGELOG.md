@@ -2,14 +2,17 @@
 
 ## [Unreleased]
 ### Added
+- Add support for Wagtail 7.4 (@marteinn)
+
 ### Changed
-- Add support for Wagtail 7.4
 - Require wagtail-modeladmin 2.3 or newer (@marteinn)
 - Require wagtail-factories 4.3 or newer for testing (@marteinn)
 
 ### Fixed
 ### Removed
-- Drop support for Wagtail versions below 7.0 (@marteinn)
+- Drop support for Wagtail versions below 7.4 (@marteinn)
+- Drop support for Python 3.9 and 3.10 (@marteinn)
+- Drop support for Django 4.2 and 5.1 (@marteinn)
 
 ## [3.2.0] - 2025-08-23
 ### Added
