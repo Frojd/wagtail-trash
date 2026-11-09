@@ -12,6 +12,7 @@
 
 ### Fixed
 - Replace removed _editor_js.html template include with insert_editor_js hook output in restore view (@marteinn)
+- Ignore /plans/ dir for boilerplate (@marteinn)
 
 ### Removed
 - Drop support for Wagtail versions below 7.4 (@marteinn)
