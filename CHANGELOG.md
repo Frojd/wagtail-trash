@@ -5,6 +5,7 @@
 - Add support for Wagtail 7.4 (@marteinn)
 - Add support for Python 3.14 (@marteinn)
 - Add support for Wagtail 8.0 and 8.1 (@marteinn)
+- Add support for Django 6.0 and 6.1 (@marteinn)
 
 ### Changed
 - Require wagtail-modeladmin 2.5 or newer (@marteinn)
