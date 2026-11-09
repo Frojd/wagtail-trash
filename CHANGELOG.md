@@ -13,6 +13,7 @@
 
 ### Fixed
 - Replace removed _editor_js.html template include with insert_editor_js hook output in restore view (@marteinn)
+- Escape page titles in trash can listing to prevent XSS (@marteinn)
 - Ignore /plans/ dir for boilerplate (@marteinn)
 - Pin GitHub Actions to commit SHAs and upgrade checkout and setup-python to v7 for Node.js 24 (@marteinn)
 

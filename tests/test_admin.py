@@ -65,6 +65,25 @@ class TestAdmin(TestCase, WagtailTestUtils):
             reverse("wagtail_trash_move", args=(top_page.id,)) in str(resp.content)
         )
 
+    def test_index_escapes_page_titles(self):
+        home = Page.objects.get(url_path="/home/")
+        parent = home.add_child(instance=Page(title="<script>alert(1)</script>"))
+        parent.add_child(instance=Page(title="<img src=x onerror=alert(2)>"))
+
+        self.client.post(reverse("wagtailadmin_pages:delete", args=(parent.id,)))
+
+        content = self.client.get(
+            trash_admin_url_helper.get_action_url("index")
+        ).content.decode()
+
+        self.assertNotIn("<script>alert(1)</script>", content)
+        self.assertNotIn("<img src=x onerror=alert(2)>", content)
+        self.assertIn(
+            "<strong>&lt;script&gt;alert(1)&lt;/script&gt;</strong><br>"
+            "&nbsp;&lt;img src=x onerror=alert(2)&gt;<br>",
+            content,
+        )
+
     def test_removing_page_sends_it_to_trash_can(self):
         root_page = Page.objects.get(url_path="/")
 

@@ -1,5 +1,6 @@
 from django.shortcuts import reverse
 from django.urls import path
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from wagtail import hooks
@@ -112,17 +113,17 @@ class TrashCanModelAdmin(ModelAdmin):
         descendants = rb.page.get_descendants(inclusive=True)
 
         depth = rb.page.depth
-        output = ""
+        output = []
 
         for i, x in enumerate(descendants):
-            output += "&nbsp;" * (x.depth - depth)
+            indent = mark_safe("&nbsp;" * (x.depth - depth))
 
             if i == 0:
-                output += "<strong>" + x.title + "</strong><br>"
+                output.append(format_html("{}<strong>{}</strong><br>", indent, x.title))
             else:
-                output += x.title + "<br>"
+                output.append(format_html("{}{}<br>", indent, x.title))
 
-        return mark_safe(output)
+        return mark_safe("".join(output))
 
     def get_queryset(self, request):
         # Create a bin if there is none
