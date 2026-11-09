@@ -83,6 +83,10 @@ jobs:
         run: uv run --frozen --no-sync black --check --verbose --extend-exclude=migrations .
       - name: Run isort
         run: uv run --frozen --no-sync isort . --check-only
+      - name: Run zizmor
+        run: uv run --frozen --no-sync zizmor --format github .github/workflows
+        env:
+          GH_TOKEN: ${{ github.token }}
 
   build:
     runs-on: ubuntu-latest
@@ -125,7 +129,7 @@ jobs:
       - name: Release to Test PyPi
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.TEST_PYPI_PASSWORD }}
-        run: uv publish --publish-url https://test.pypi.org/legacy/ dist/*
+        run: uv publish --publish-url https://test.pypi.org/legacy/ dist/* # zizmor: ignore[use-trusted-publishing]
 
   publish-pypi:
     runs-on: ubuntu-latest
@@ -148,4 +152,4 @@ jobs:
       - name: Release to PyPi
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_PASSWORD }}
-        run: uv publish dist/*
+        run: uv publish dist/* # zizmor: ignore[use-trusted-publishing]

@@ -67,9 +67,20 @@ make format_code
 `make format_code` runs the exact black and isort versions locked in `uv.lock`, the
 same ones CI uses, so it needs [uv](https://docs.astral.sh/uv/).
 
+## CI workflows
+
+Workflows in `.github/workflows/` are audited with [zizmor](https://docs.zizmor.sh/)
+in CI. Run it locally before changing them:
+
+```bash
+uv run --frozen --only-group lint zizmor .github/workflows
+```
+
+Actions must be pinned to a full commit SHA, the repository policy rejects tags.
+
 ## CI dependencies
 
-The tools CI uses to lint and build (uv, black, isort, setuptools, wheel) are
+The tools CI uses to lint and build (uv, black, isort, zizmor, setuptools, wheel) are
 declared as dependency groups in `pyproject.toml` and locked with hashes in
 `uv.lock`. Publishing uses `uv publish`. `requirements/uv.txt` (used to install uv
 itself) and `requirements/build-constraints.txt` are exported from `uv.lock`.
