@@ -436,6 +436,54 @@ class TestAdmin(TestCase, WagtailTestUtils):
         self.assertEqual(page.slug, f"trash-{page.id}-page")
         self.assertTrue(TrashCan.objects.filter(page_id=page.id).exists())
 
+    def test_restore_into_trashed_parent_is_rejected(self):
+        home = Page.objects.get(url_path="/home/")
+        parent = home.add_child(instance=Page(title="parent"))
+        child = parent.add_child(instance=Page(title="child"))
+
+        self.client.post(reverse("wagtailadmin_pages:delete", args=(child.id,)))
+        self.client.post(reverse("wagtailadmin_pages:delete", args=(parent.id,)))
+
+        response = self.client.get(reverse("wagtail_trash_restore", args=(child.id,)))
+
+        self.assertRedirects(
+            response,
+            reverse("wagtail_trash_move", args=(child.id,)),
+            fetch_redirect_response=False,
+        )
+        self.assertEqual(
+            [m.level_tag for m in get_messages(response.wsgi_request)][-1], "error"
+        )
+        child.refresh_from_db()
+        self.assertEqual(child.get_parent().specific_class, TrashCanPage)
+        self.assertTrue(TrashCan.objects.filter(page_id=child.id).exists())
+
+    def test_restore_and_move_into_trashed_page_shows_form_error(self):
+        home = Page.objects.get(url_path="/home/")
+        page = home.add_child(instance=Page(title="page"))
+        trashed_section = home.add_child(instance=Page(title="trashed section"))
+        destination = trashed_section.add_child(instance=Page(title="destination"))
+
+        self.client.post(reverse("wagtailadmin_pages:delete", args=(page.id,)))
+        self.client.post(
+            reverse("wagtailadmin_pages:delete", args=(trashed_section.id,))
+        )
+
+        response = self.client.post(
+            reverse("wagtail_trash_move", args=(page.id,)),
+            {"move_page": str(destination.id)},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(
+            response.context["form"],
+            "move_page",
+            "The destination is in the trash can, choose another location.",
+        )
+        page.refresh_from_db()
+        self.assertEqual(page.get_parent().specific_class, TrashCanPage)
+        self.assertTrue(TrashCan.objects.filter(page_id=page.id).exists())
+
     def test_move_view_renders(self):
         from wagtail_trash.wagtail_hooks import urlconf_time
 

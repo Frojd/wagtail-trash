@@ -9,7 +9,7 @@ from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
 from wagtail_modeladmin.views import DeleteView, IndexView
 
 from .models import TrashCan, TrashCanPage
-from .utils import trash_can_for_request
+from .utils import is_in_trash, trash_can_for_request
 from .views import trash_bulk_delete, trash_delete, trash_move, trash_restore
 
 
@@ -42,20 +42,6 @@ class TrashButtonHelper(ButtonHelper):
             "title": _("Restore"),
         }
 
-    def has_ancestor_in_bin(self, obj):
-        parent = obj.get_parent()
-
-        if not parent:
-            return False
-
-        ancestor_app_labels = list(
-            parent.get_ancestors(inclusive=True).values_list(
-                "content_type__app_label", flat=True
-            )
-        )
-
-        return "wagtail_trash" in ancestor_app_labels
-
     def get_buttons_for_obj(
         self, obj, exclude=["edit"], classnames_add=None, classnames_exclude=None
     ):
@@ -65,7 +51,7 @@ class TrashButtonHelper(ButtonHelper):
 
         if "restore" not in (exclude or []):
             parent = obj.parent
-            if parent and not self.has_ancestor_in_bin(parent):
+            if parent and not is_in_trash(parent):
                 buttons.append(self.restore_button(obj))
             buttons.append(self.restore_and_move_button(obj))
 

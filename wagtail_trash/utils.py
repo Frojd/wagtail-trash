@@ -42,6 +42,10 @@ def generate_page_data(page):
     return json.dumps(data)
 
 
+def is_in_trash(page):
+    return page.get_ancestors(inclusive=True).type(TrashCanPage).exists()
+
+
 class RestoreError(Exception):
     pass
 
@@ -53,6 +57,11 @@ def restore_and_move_page(rb, move_to_page, request):
     if move_to_page is None:
         raise RestoreError(
             _("The original parent page no longer exists, choose a new location.")
+        )
+
+    if is_in_trash(move_to_page):
+        raise RestoreError(
+            _("The destination is in the trash can, choose another location.")
         )
 
     slug = re.sub(r"trash-\d+-", "", rb.page.slug)
