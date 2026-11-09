@@ -6,14 +6,20 @@
 - Add support for Python 3.14 (@marteinn)
 - Add support for Wagtail 8.0 and 8.1 (@marteinn)
 - Add support for Django 6.0 and 6.1 (@marteinn)
+- Add requirements section with supported Python, Django and Wagtail versions to README (@marteinn)
 
 ### Changed
 - Require wagtail-modeladmin 2.5 or newer (@marteinn)
 - Require wagtail-factories 4.5 or newer for testing (@marteinn)
+- Lock CI tooling with hashes in uv.lock using dependency groups and add make lock to regenerate them (@marteinn)
+- Split CI publish into build and publish jobs using GitHub environments and uv publish, and limit workflow permissions (@marteinn)
+- Test lowest declared dependency versions in CI (@marteinn)
+- Remove deprecated setup_requires from setup.py (@marteinn)
 
 ### Fixed
 - Replace removed _editor_js.html template include with insert_editor_js hook output in restore view (@marteinn)
 - Escape page titles in trash can listing to prevent XSS (@marteinn)
+- Show an error instead of crashing when restoring a page whose parent was deleted or whose slug is taken at the destination (@marteinn)
 - Ignore /plans/ dir for boilerplate (@marteinn)
 - Pin GitHub Actions to commit SHAs and upgrade checkout and setup-python to v7 for Node.js 24 (@marteinn)
 

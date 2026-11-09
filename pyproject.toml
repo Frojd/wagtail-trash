@@ -1,0 +1,4 @@
+[dependency-groups]
+uv = ["uv==0.13.5"]
+lint = ["black==22.6.0", "isort==9.0.2"]
+build = ["setuptools", "wheel"]

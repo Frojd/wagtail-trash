@@ -5,6 +5,15 @@
 Instead of deleting pages when pressing delete, pages will get thrown into the "Trash Can".
 
 
+## Requirements
+
+- Python 3.11, 3.12, 3.13, 3.14
+- Django 5.2, 6.0, 6.1
+- Wagtail 7.4, 8.0, 8.1
+
+Django 6.0 and 6.1 require Python 3.12 or newer, and Wagtail 7.4 supports Django 5.2 and 6.0 only.
+
+
 ## Install
 
 1. First install the python package:

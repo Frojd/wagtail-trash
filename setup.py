@@ -26,7 +26,6 @@ setup(
     extras_require={
         "testing": testing_extras,
     },
-    setup_requires=["wheel"],
     zip_safe=False,
     license="MIT License",
     packages=find_packages(exclude=["tests*"]),
