@@ -368,3 +368,21 @@ class TestAdmin(TestCase, WagtailTestUtils):
                 args=(sub_page.id,),
             )
             self.client.get(restore_url)
+
+    def test_move_view_includes_editor_js_hook_output(self):
+        from wagtail_trash.wagtail_hooks import urlconf_time
+
+        root_page = Page.objects.get(url_path="/")
+        page = Page(title="page")
+        root_page.add_child(instance=page)
+
+        marker = '<script src="/editor-js-hook-marker.js"></script>'
+
+        with self.register_hook("register_admin_urls", urlconf_time):
+            with self.register_hook("insert_editor_js", lambda: marker):
+                response = self.client.get(
+                    reverse("wagtail_trash_move", args=(page.id,))
+                )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content.decode().count(marker), 1)
