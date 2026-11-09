@@ -8,7 +8,12 @@ from wagtail.models import Page
 
 from .forms import MoveForm
 from .models import TrashCan
-from .utils import generate_page_data, restore_and_move_page, trash_can_for_request
+from .utils import (
+    RestoreError,
+    generate_page_data,
+    restore_and_move_page,
+    trash_can_for_request,
+)
 
 
 def get_valid_next_url_from_request(request):
@@ -124,7 +129,12 @@ def trash_move(request, page_id):
 
         rb = TrashCan.objects.get(page_id=page_id)
         move_to_page = Page.objects.get(pk=request.POST.get("move_page"))
-        restore_and_move_page(rb, move_to_page, request)
+
+        try:
+            restore_and_move_page(rb, move_to_page, request)
+        except RestoreError as e:
+            form.add_error("move_page", str(e))
+            return render(request, "wagtail_trash/move.html", {"form": form})
 
         messages.success(
             request,
@@ -151,7 +161,16 @@ def trash_restore(request, page_id):
     if not page.permissions_for_user(request.user).can_edit():
         raise PermissionDenied
 
-    restore_and_move_page(rb, rb.parent, request)
+    try:
+        restore_and_move_page(rb, rb.parent, request)
+    except RestoreError as e:
+        messages.error(
+            request,
+            _("Page '{0}' could not be restored. {1}").format(
+                page.get_admin_display_title(), e
+            ),
+        )
+        return redirect("wagtail_trash_move", page_id)
 
     messages.success(
         request,

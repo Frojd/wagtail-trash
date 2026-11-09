@@ -1,3 +1,4 @@
+from django.contrib.messages import get_messages
 from django.shortcuts import reverse
 from django.test import TestCase
 from wagtail.models import Page
@@ -369,6 +370,71 @@ class TestAdmin(TestCase, WagtailTestUtils):
             )
             response = self.client.post(restore_url, {"move_page": ""})
             self.assertIn("This field is required", str(response.content))
+
+    def test_restore_with_deleted_parent_redirects_to_move(self):
+        home = Page.objects.get(url_path="/home/")
+        parent = home.add_child(instance=Page(title="parent"))
+        child = parent.add_child(instance=Page(title="child"))
+
+        self.client.post(reverse("wagtailadmin_pages:delete", args=(child.id,)))
+        Page.objects.get(id=parent.id).delete()
+
+        response = self.client.get(reverse("wagtail_trash_restore", args=(child.id,)))
+
+        self.assertRedirects(
+            response,
+            reverse("wagtail_trash_move", args=(child.id,)),
+            fetch_redirect_response=False,
+        )
+        self.assertEqual(
+            [m.level_tag for m in get_messages(response.wsgi_request)][-1], "error"
+        )
+        self.assertTrue(TrashCan.objects.filter(page_id=child.id).exists())
+
+    def test_restore_with_slug_conflict_keeps_page_in_trash(self):
+        home = Page.objects.get(url_path="/home/")
+        page = home.add_child(instance=Page(title="page", slug="page"))
+
+        self.client.post(reverse("wagtailadmin_pages:delete", args=(page.id,)))
+        home.add_child(instance=Page(title="replacement", slug="page"))
+
+        response = self.client.get(reverse("wagtail_trash_restore", args=(page.id,)))
+
+        self.assertRedirects(
+            response,
+            reverse("wagtail_trash_move", args=(page.id,)),
+            fetch_redirect_response=False,
+        )
+        self.assertEqual(
+            [m.level_tag for m in get_messages(response.wsgi_request)][-1], "error"
+        )
+        page.refresh_from_db()
+        self.assertEqual(page.slug, f"trash-{page.id}-page")
+        self.assertEqual(page.get_parent().specific_class, TrashCanPage)
+        self.assertTrue(TrashCan.objects.filter(page_id=page.id).exists())
+
+    def test_restore_and_move_with_slug_conflict_shows_form_error(self):
+        home = Page.objects.get(url_path="/home/")
+        page = home.add_child(instance=Page(title="page", slug="page"))
+        self.client.post(reverse("wagtailadmin_pages:delete", args=(page.id,)))
+
+        destination = home.add_child(instance=Page(title="destination"))
+        destination.add_child(instance=Page(title="occupant", slug="page"))
+
+        response = self.client.post(
+            reverse("wagtail_trash_move", args=(page.id,)),
+            {"move_page": str(destination.id)},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(
+            response.context["form"],
+            "move_page",
+            "The slug 'page' is already in use at the destination.",
+        )
+        page.refresh_from_db()
+        self.assertEqual(page.slug, f"trash-{page.id}-page")
+        self.assertTrue(TrashCan.objects.filter(page_id=page.id).exists())
 
     def test_move_view_renders(self):
         from wagtail_trash.wagtail_hooks import urlconf_time

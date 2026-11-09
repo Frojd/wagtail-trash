@@ -42,11 +42,27 @@ def generate_page_data(page):
     return json.dumps(data)
 
 
+class RestoreError(Exception):
+    pass
+
+
 def restore_and_move_page(rb, move_to_page, request):
     if not rb.page.permissions_for_user(request.user).can_move():
         raise PermissionDenied
 
-    rb.page.slug = re.sub(r"trash-\d+-", "", rb.page.slug)
+    if move_to_page is None:
+        raise RestoreError(
+            _("The original parent page no longer exists, choose a new location.")
+        )
+
+    slug = re.sub(r"trash-\d+-", "", rb.page.slug)
+
+    if move_to_page.get_children().filter(slug=slug).exists():
+        raise RestoreError(
+            _("The slug '{0}' is already in use at the destination.").format(slug)
+        )
+
+    rb.page.slug = slug
     rb.page.save()
 
     action = MovePageAction(rb.page, move_to_page, pos="first-child", user=request.user)
