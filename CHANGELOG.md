@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Add support for Wagtail 7.4 (@marteinn)
+- Add support for Python 3.14 (@marteinn)
 
 ### Changed
 - Require wagtail-modeladmin 2.3 or newer (@marteinn)
