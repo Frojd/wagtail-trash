@@ -1,0 +1,21 @@
+# https://trivy.dev/latest/docs/configuration/filtering/#trivyignoreyaml
+
+vulnerabilities:
+  # Only affects the psf/black GitHub Action with use_pyproject: true. CI installs
+  # black from uv.lock and runs it directly, the action is not used.
+  # Upstream: https://github.com/psf/black/pull/5510
+  # Remove when black is upgraded to 26.10.1 or newer
+  - id: CVE-2026-114134
+    paths:
+      - uv.lock
+
+misconfigurations:
+  # Dockerfile is only used for local development via docker-compose, never deployed
+  - id: DS-0002
+    paths:
+      - Dockerfile
+
+  # DJANGO_SUPERUSER_PASSWORD=admin is a dummy password for the local dev superuser
+  - id: DS-0031
+    paths:
+      - Dockerfile

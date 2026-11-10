@@ -1,0 +1,5 @@
+rules:
+  use-trusted-publishing:
+    # Token based publishing until Trusted Publishing is set up on pypi.org and test.pypi.org
+    ignore:
+      - deploy.yml

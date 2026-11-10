@@ -15,6 +15,8 @@
 - Split CI publish into build and publish jobs using GitHub environments and uv publish, and limit workflow permissions (@marteinn)
 - Test lowest declared dependency versions in CI (@marteinn)
 - Lint GitHub Actions workflows with zizmor in CI (@marteinn)
+- Split CI into ci.yml and a reusable deploy.yml following the Frojd CI/CD standard (@marteinn)
+- Add Trivy scanning for vulnerabilities, misconfigurations and secrets in CI (@marteinn)
 - Remove deprecated setup_requires from setup.py (@marteinn)
 
 ### Fixed

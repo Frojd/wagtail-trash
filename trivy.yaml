@@ -1,0 +1,24 @@
+# https://trivy.dev/latest/docs/references/configuration/config-file/
+ignorefile: .trivyignore.yaml
+
+severity:
+  - CRITICAL
+  - HIGH
+
+# Tool versions are locked as uv dependency groups, which Trivy treats as dev deps
+pkg:
+  include-dev-deps: true
+
+scan:
+  scanners:
+    - vuln
+    - misconfig
+    - secret
+  skip-dirs:
+    - .venv
+    - venv
+    - .git
+    - __pycache__
+    - build
+    - dist
+    - wagtail_trash.egg-info

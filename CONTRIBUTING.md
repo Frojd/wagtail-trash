@@ -69,14 +69,30 @@ same ones CI uses, so it needs [uv](https://docs.astral.sh/uv/).
 
 ## CI workflows
 
-Workflows in `.github/workflows/` are audited with [zizmor](https://docs.zizmor.sh/)
-in CI. Run it locally before changing them:
+CI is split in two workflows in `.github/workflows/`:
 
-```bash
-uv run --frozen --only-group lint zizmor .github/workflows
-```
+- `ci.yml` runs on every push and pull request: `lint`, `test`, `test-lowest`,
+  `security` (Trivy) and `security-actions` (zizmor)
+- `deploy.yml` is a reusable workflow that `ci.yml` calls on `v*` and `testv*` tags
+  once all checks pass. It builds the package and publishes it
 
 Actions must be pinned to a full commit SHA, the repository policy rejects tags.
+Reusable workflows in this repo are referenced with `$/.github/workflows/...`.
+
+Workflows are audited with [zizmor](https://docs.zizmor.sh/), configured in
+`zizmor.yml`. Run it locally before changing them:
+
+```bash
+uv run --frozen --only-group lint zizmor --config zizmor.yml .github/workflows
+```
+
+[Trivy](https://trivy.dev/) scans for vulnerable dependencies, misconfigurations and
+leaked secrets, configured in `trivy.yaml`. Accepted findings go in
+`.trivyignore.yaml` with a comment explaining why. To run it locally:
+
+```bash
+trivy fs --config trivy.yaml .
+```
 
 ## CI dependencies
 
@@ -123,6 +139,6 @@ Branch off `develop` and open your pull request against `develop`. Add a line to
 `CHANGELOG.md` describing your change.
 
 Releases are published automatically: pushing a `v*` tag publishes to PyPI, and a
-`testv*` tag publishes to TestPyPI. The package is built once in a `build` job and
-the same files are uploaded by the publish job, which runs in the `pypi` or
-`testpypi` GitHub environment.
+`testv*` tag publishes to TestPyPI. The package is built once in the `build` job in
+`deploy.yml` and the same files are uploaded by `deploy-pypi` or `deploy-testpypi`,
+which run in the `pypi` and `testpypi` GitHub environments.
