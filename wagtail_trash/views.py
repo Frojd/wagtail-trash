@@ -1,4 +1,3 @@
-from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext as _
@@ -128,7 +127,7 @@ def trash_move(request, page_id):
             )
 
         rb = TrashCan.objects.get(page_id=page_id)
-        move_to_page = Page.objects.get(pk=request.POST.get("move_page"))
+        move_to_page = form.cleaned_data["move_page"]
 
         try:
             restore_and_move_page(rb, move_to_page, request)
@@ -157,9 +156,6 @@ def trash_move(request, page_id):
 def trash_restore(request, page_id):
     rb = TrashCan.objects.get(page_id=page_id)
     page = rb.page
-
-    if not page.permissions_for_user(request.user).can_edit():
-        raise PermissionDenied
 
     try:
         restore_and_move_page(rb, rb.parent, request)

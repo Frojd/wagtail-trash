@@ -22,6 +22,8 @@
 - Escape page titles in trash can listing to prevent XSS (@marteinn)
 - Show an error instead of crashing when restoring a page whose parent was deleted or whose slug is taken at the destination (@marteinn)
 - Prevent restoring pages into a parent or destination that is itself in the trash can (@marteinn)
+- Check restore permissions against the destination so non-superusers can restore pages, and require add and publish rights there (@marteinn)
+- Show a form error instead of crashing when restore and move gets an unknown destination page (@marteinn)
 - Ignore /plans/ dir for boilerplate (@marteinn)
 - Pin GitHub Actions to commit SHAs and upgrade checkout and setup-python to v7 for Node.js 24 (@marteinn)
 

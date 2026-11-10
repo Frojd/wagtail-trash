@@ -484,6 +484,22 @@ class TestAdmin(TestCase, WagtailTestUtils):
         self.assertEqual(page.get_parent().specific_class, TrashCanPage)
         self.assertTrue(TrashCan.objects.filter(page_id=page.id).exists())
 
+    def test_restore_and_move_with_unknown_destination_shows_form_error(self):
+        home = Page.objects.get(url_path="/home/")
+        page = home.add_child(instance=Page(title="page"))
+        self.client.post(reverse("wagtailadmin_pages:delete", args=(page.id,)))
+
+        response = self.client.post(
+            reverse("wagtail_trash_move", args=(page.id,)),
+            {"move_page": "999999"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(
+            response.context["form"], "move_page", "The chosen page does not exist."
+        )
+        self.assertTrue(TrashCan.objects.filter(page_id=page.id).exists())
+
     def test_move_view_renders(self):
         from wagtail_trash.wagtail_hooks import urlconf_time
 

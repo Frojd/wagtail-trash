@@ -1,7 +1,6 @@
 import json
 import re
 
-from django.core.exceptions import PermissionDenied
 from django.utils.translation import gettext as _
 from wagtail.actions.move_page import MovePageAction
 from wagtail.models import Page, Site
@@ -50,10 +49,19 @@ class RestoreError(Exception):
     pass
 
 
-def restore_and_move_page(rb, move_to_page, request):
-    if not rb.page.permissions_for_user(request.user).can_move():
-        raise PermissionDenied
+def user_can_restore_to(rb, destination, user):
+    permissions = destination.permissions_for_user(user)
 
+    if not permissions.can_add_subpage():
+        return False
+
+    if json.loads(rb.data)["published"]:
+        return permissions.can_publish_subpage()
+
+    return True
+
+
+def restore_and_move_page(rb, move_to_page, request):
     if move_to_page is None:
         raise RestoreError(
             _("The original parent page no longer exists, choose a new location.")
@@ -62,6 +70,11 @@ def restore_and_move_page(rb, move_to_page, request):
     if is_in_trash(move_to_page):
         raise RestoreError(
             _("The destination is in the trash can, choose another location.")
+        )
+
+    if not user_can_restore_to(rb, move_to_page, request.user):
+        raise RestoreError(
+            _("You do not have permission to restore the page to this location.")
         )
 
     slug = re.sub(r"trash-\d+-", "", rb.page.slug)
