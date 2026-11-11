@@ -1,0 +1,24 @@
+{% extends "wagtailadmin/base.html" %}
+{% load i18n wagtailadmin_tags %}
+{% block titletag %}{% trans "Trash Can" %}{% endblock %}
+
+{% block content %}
+    {% trans "Restore page" as header_title %}
+    {% include "wagtailadmin/shared/header.html" with title=header_title subtitle=page.get_admin_display_title icon="redirect" %}
+
+    <div class="nice-padding">
+        {% if parent %}
+            <p>
+                {% blocktrans trimmed with title=page.get_admin_display_title parent_title=parent.get_admin_display_title %}
+                    Restore '{{ title }}' to its original location under '{{ parent_title }}'?
+                {% endblocktrans %}
+            </p>
+        {% endif %}
+
+        <form action="{% url 'wagtail_trash_restore' page.id %}" method="POST">
+            {% csrf_token %}
+            <input type="submit" value="{% trans 'Restore' %}" class="button" />
+            <a href="{% url 'wagtail_trash_move' page.id %}" class="button button-secondary">{% trans "Restore and move" %}</a>
+        </form>
+    </div>
+{% endblock %}

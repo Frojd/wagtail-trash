@@ -37,7 +37,7 @@ class TestManagers(TestCase, WagtailTestUtils):
 
         with self.register_hook("register_admin_urls", urlconf_time):
             restore_url = reverse("wagtail_trash_restore", args=(sub_sub_page.id,))
-            self.client.get(restore_url)
+            self.client.post(restore_url)
 
         self.assertEqual(TestPage.objects.count(), 3)
         self.assertEqual(TestPage.objects_excluding_bins.count(), 3)

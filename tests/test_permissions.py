@@ -70,7 +70,7 @@ class TestPermissions(TestCase, WagtailTestUtils):
         page = self.section.add_child(instance=Page(title="page"))
         self.trash(page, self.editor)
 
-        self.client.get(reverse("wagtail_trash_restore", args=(page.id,)))
+        self.client.post(reverse("wagtail_trash_restore", args=(page.id,)))
 
         self.assert_restored_under(page, self.section)
         self.assertTrue(Page.objects.get(id=page.id).live)
@@ -92,7 +92,7 @@ class TestPermissions(TestCase, WagtailTestUtils):
         self.trash(page, self.superuser)
 
         self.client.force_login(self.editor)
-        self.client.get(reverse("wagtail_trash_restore", args=(page.id,)))
+        self.client.post(reverse("wagtail_trash_restore", args=(page.id,)))
 
         self.assert_in_trash(page)
 
@@ -112,7 +112,7 @@ class TestPermissions(TestCase, WagtailTestUtils):
         self.trash(page, self.superuser)
 
         self.client.force_login(self.drafter)
-        self.client.get(reverse("wagtail_trash_restore", args=(page.id,)))
+        self.client.post(reverse("wagtail_trash_restore", args=(page.id,)))
 
         self.assert_in_trash(page)
 
@@ -120,7 +120,7 @@ class TestPermissions(TestCase, WagtailTestUtils):
         page = self.section.add_child(instance=Page(title="page", live=False))
         self.trash(page, self.drafter)
 
-        self.client.get(reverse("wagtail_trash_restore", args=(page.id,)))
+        self.client.post(reverse("wagtail_trash_restore", args=(page.id,)))
 
         self.assert_restored_under(page, self.section)
         self.assertFalse(Page.objects.get(id=page.id).live)

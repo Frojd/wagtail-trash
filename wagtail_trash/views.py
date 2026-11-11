@@ -1,4 +1,4 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext as _
 from treebeard.mp_tree import MP_MoveHandler
@@ -154,8 +154,13 @@ def trash_move(request, page_id):
 
 
 def trash_restore(request, page_id):
-    rb = TrashCan.objects.get(page_id=page_id)
+    rb = get_object_or_404(TrashCan, page_id=page_id)
     page = rb.page
+
+    if request.method != "POST":
+        return render(
+            request, "wagtail_trash/restore.html", {"page": page, "parent": rb.parent}
+        )
 
     try:
         restore_and_move_page(rb, rb.parent, request)

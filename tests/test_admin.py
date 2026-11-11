@@ -142,7 +142,7 @@ class TestAdmin(TestCase, WagtailTestUtils):
 
         with self.register_hook("register_admin_urls", urlconf_time):
             restore_url = reverse("wagtail_trash_restore", args=(p1.pk,))
-            self.client.get(restore_url)
+            self.client.post(restore_url)
 
         p1.refresh_from_db()
         self.assertEqual(p1_slug, p1.slug)
@@ -272,7 +272,7 @@ class TestAdmin(TestCase, WagtailTestUtils):
 
         with self.register_hook("register_admin_urls", urlconf_time):
             restore_url = reverse("wagtail_trash_restore", args=(top.id,))
-            self.client.get(restore_url)
+            self.client.post(restore_url)
 
         top.refresh_from_db()
 
@@ -307,7 +307,7 @@ class TestAdmin(TestCase, WagtailTestUtils):
 
         with self.register_hook("register_admin_urls", urlconf_time):
             restore_url = reverse("wagtail_trash_restore", args=(top.id,))
-            self.client.get(restore_url)
+            self.client.post(restore_url)
 
         top.refresh_from_db()
 
@@ -379,7 +379,7 @@ class TestAdmin(TestCase, WagtailTestUtils):
         self.client.post(reverse("wagtailadmin_pages:delete", args=(child.id,)))
         Page.objects.get(id=parent.id).delete()
 
-        response = self.client.get(reverse("wagtail_trash_restore", args=(child.id,)))
+        response = self.client.post(reverse("wagtail_trash_restore", args=(child.id,)))
 
         self.assertRedirects(
             response,
@@ -398,7 +398,7 @@ class TestAdmin(TestCase, WagtailTestUtils):
         self.client.post(reverse("wagtailadmin_pages:delete", args=(page.id,)))
         home.add_child(instance=Page(title="replacement", slug="page"))
 
-        response = self.client.get(reverse("wagtail_trash_restore", args=(page.id,)))
+        response = self.client.post(reverse("wagtail_trash_restore", args=(page.id,)))
 
         self.assertRedirects(
             response,
@@ -444,7 +444,7 @@ class TestAdmin(TestCase, WagtailTestUtils):
         self.client.post(reverse("wagtailadmin_pages:delete", args=(child.id,)))
         self.client.post(reverse("wagtailadmin_pages:delete", args=(parent.id,)))
 
-        response = self.client.get(reverse("wagtail_trash_restore", args=(child.id,)))
+        response = self.client.post(reverse("wagtail_trash_restore", args=(child.id,)))
 
         self.assertRedirects(
             response,
@@ -516,7 +516,7 @@ class TestAdmin(TestCase, WagtailTestUtils):
                 "wagtail_trash_move",
                 args=(sub_page.id,),
             )
-            self.client.get(restore_url)
+            self.client.post(restore_url)
 
     def test_move_view_includes_editor_js_hook_output(self):
         from wagtail_trash.wagtail_hooks import urlconf_time
@@ -535,3 +535,39 @@ class TestAdmin(TestCase, WagtailTestUtils):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content.decode().count(marker), 1)
+
+    def test_restore_get_shows_confirmation_without_restoring(self):
+        home = Page.objects.get(url_path="/home/")
+        page = home.add_child(instance=Page(title="page", slug="page"))
+        self.client.post(reverse("wagtailadmin_pages:delete", args=(page.id,)))
+        restore_url = reverse("wagtail_trash_restore", args=(page.id,))
+
+        response = self.client.get(restore_url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, f'action="{restore_url}" method="POST"')
+        self.assertContains(response, "csrfmiddlewaretoken")
+        page.refresh_from_db()
+        self.assertEqual(page.get_parent().specific_class, TrashCanPage)
+        self.assertTrue(TrashCan.objects.filter(page_id=page.id).exists())
+
+    def test_restore_post_restores_page(self):
+        home = Page.objects.get(url_path="/home/")
+        page = home.add_child(instance=Page(title="page", slug="page"))
+        self.client.post(reverse("wagtailadmin_pages:delete", args=(page.id,)))
+
+        response = self.client.post(reverse("wagtail_trash_restore", args=(page.id,)))
+
+        self.assertRedirects(
+            response,
+            reverse("wagtailadmin_explore", args=(page.id,)),
+            fetch_redirect_response=False,
+        )
+        page.refresh_from_db()
+        self.assertEqual(page.get_parent().id, home.id)
+        self.assertFalse(TrashCan.objects.filter(page_id=page.id).exists())
+
+    def test_restore_unknown_page_returns_404(self):
+        response = self.client.post(reverse("wagtail_trash_restore", args=(999999,)))
+
+        self.assertEqual(response.status_code, 404)
