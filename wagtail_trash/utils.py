@@ -72,6 +72,13 @@ def restore_and_move_page(rb, move_to_page, request):
             _("The destination is in the trash can, choose another location.")
         )
 
+    if not rb.page.specific.can_move_to(move_to_page):
+        raise RestoreError(
+            _(
+                "This page type is not allowed at the destination, choose another location."
+            )
+        )
+
     if not user_can_restore_to(rb, move_to_page, request.user):
         raise RestoreError(
             _("You do not have permission to restore the page to this location.")

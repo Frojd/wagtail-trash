@@ -4,7 +4,7 @@ from django.test import TestCase
 from wagtail.models import Page
 from wagtail.test.utils import WagtailTestUtils
 
-from tests.app.models import TestPage
+from tests.app.models import ArticlePage, SectionPage, SingletonPage, TestPage
 from wagtail_trash.models import TrashCan, TrashCanPage
 from wagtail_trash.views import trash_bulk_delete, trash_delete
 from wagtail_trash.wagtail_hooks import TrashCanModelAdmin
@@ -571,3 +571,65 @@ class TestAdmin(TestCase, WagtailTestUtils):
         response = self.client.post(reverse("wagtail_trash_restore", args=(999999,)))
 
         self.assertEqual(response.status_code, 404)
+
+    def test_restore_and_move_rejects_destination_disallowed_by_parent_page_types(self):
+        home = Page.objects.get(url_path="/home/")
+        section = home.add_child(instance=SectionPage(title="section"))
+        article = section.add_child(instance=ArticlePage(title="article"))
+        self.client.post(reverse("wagtailadmin_pages:delete", args=(article.id,)))
+
+        response = self.client.post(
+            reverse("wagtail_trash_move", args=(article.id,)),
+            {"move_page": str(home.id)},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(
+            response.context["form"],
+            "move_page",
+            "This page type is not allowed at the destination, choose another location.",
+        )
+        article.refresh_from_db()
+        self.assertEqual(article.get_parent().specific_class, TrashCanPage)
+        self.assertTrue(TrashCan.objects.filter(page_id=article.id).exists())
+
+    def test_restore_and_move_allows_destination_permitted_by_parent_page_types(self):
+        home = Page.objects.get(url_path="/home/")
+        section = home.add_child(instance=SectionPage(title="section"))
+        other_section = home.add_child(instance=SectionPage(title="other section"))
+        article = section.add_child(instance=ArticlePage(title="article"))
+        self.client.post(reverse("wagtailadmin_pages:delete", args=(article.id,)))
+
+        self.client.post(
+            reverse("wagtail_trash_move", args=(article.id,)),
+            {"move_page": str(other_section.id)},
+        )
+
+        self.assertEqual(
+            Page.objects.get(id=article.id).get_parent().id, other_section.id
+        )
+        self.assertFalse(TrashCan.objects.filter(page_id=article.id).exists())
+
+    def test_restore_rejects_parent_that_reached_max_count_per_parent(self):
+        home = Page.objects.get(url_path="/home/")
+        singleton = home.add_child(
+            instance=SingletonPage(title="singleton", slug="one")
+        )
+        self.client.post(reverse("wagtailadmin_pages:delete", args=(singleton.id,)))
+        home.add_child(instance=SingletonPage(title="replacement", slug="two"))
+
+        response = self.client.post(
+            reverse("wagtail_trash_restore", args=(singleton.id,))
+        )
+
+        self.assertRedirects(
+            response,
+            reverse("wagtail_trash_move", args=(singleton.id,)),
+            fetch_redirect_response=False,
+        )
+        self.assertEqual(
+            [m.level_tag for m in get_messages(response.wsgi_request)][-1], "error"
+        )
+        singleton.refresh_from_db()
+        self.assertEqual(singleton.get_parent().specific_class, TrashCanPage)
+        self.assertTrue(TrashCan.objects.filter(page_id=singleton.id).exists())

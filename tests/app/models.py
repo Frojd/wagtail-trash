@@ -12,3 +12,15 @@ class TestPage(SkipSitemapIfInTrashMixin, Page):
 class OtherPage(SkipSitemapIfInTrashMixin, Page):
     objects = PageManager()
     objects_excluding_bins = TrashManager()
+
+
+class SectionPage(Page):
+    pass
+
+
+class ArticlePage(Page):
+    parent_page_types = ["app.SectionPage"]
+
+
+class SingletonPage(Page):
+    max_count_per_parent = 1
