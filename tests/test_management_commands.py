@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from django.core.management import call_command
+from django.core.management import CommandError, call_command
 from django.test import TestCase
 from django.utils import timezone
 from wagtail.models import Page
@@ -31,6 +31,21 @@ class TestEmptyTrashCommand(TestCase, WagtailTestUtils):
         self.assertFalse(TrashCan.objects.filter(page_id=old_page.id).exists())
         self.assertTrue(TrashCan.objects.filter(page_id=new_page.id).exists())
         self.assertEqual(TrashCan.objects.count(), 1)
+
+    def test_empty_bin_deletes_descendants_of_removed_pages(self):
+        root_page = Page.objects.get(url_path="/")
+        old_page = root_page.add_child(instance=Page(title="old page"))
+        child = old_page.add_child(instance=Page(title="child"))
+        TrashCan.objects.create(page=old_page)
+        TrashCan.objects.update(time_recycled=timezone.now() - timedelta(days=31))
+
+        call_command("empty_trash", older_than_days=30)
+
+        self.assertFalse(Page.objects.filter(id__in=[old_page.id, child.id]).exists())
+
+    def test_empty_bin_requires_older_than_days(self):
+        with self.assertRaises(CommandError):
+            call_command("empty_trash")
 
 
 class TestDeleteStraypagesCommand(TestCase, WagtailTestUtils):

@@ -1,4 +1,4 @@
-from wagtail_trash.models import TrashCan
+from wagtail_trash.utils import is_in_trash
 
 
 class SkipSitemapIfInTrashMixin:
@@ -9,4 +9,4 @@ class SkipSitemapIfInTrashMixin:
         return super().get_sitemap_urls(request=request)
 
     def in_trash_can(self) -> bool:
-        return TrashCan.objects.filter(page=self).exists()
+        return is_in_trash(self)

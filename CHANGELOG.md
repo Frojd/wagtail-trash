@@ -28,6 +28,7 @@
 - Show a form error instead of crashing when restore and move gets an unknown destination page (@marteinn)
 - Require POST to restore a page, GET now shows a confirmation page, and return 404 for unknown pages (@marteinn)
 - Enforce page type rules such as parent_page_types and max_count_per_parent when restoring a page (@marteinn)
+- Exclude descendants of trashed pages from the sitemap when using SkipSitemapIfInTrashMixin (@marteinn)
 - Ignore /plans/ dir for boilerplate (@marteinn)
 - Pin GitHub Actions to commit SHAs and upgrade checkout and setup-python to v7 for Node.js 24 (@marteinn)
 

@@ -116,6 +116,7 @@ class TestAdmin(TestCase, WagtailTestUtils):
             self.client.post(delete_url)
 
         trash_can_page = TrashCanPage.objects.first()
+        new_page.refresh_from_db()
         assert len(trash_can_page.get_sitemap_urls()) == 0
         assert len(new_page.get_sitemap_urls()) == 0
 
@@ -633,3 +634,122 @@ class TestAdmin(TestCase, WagtailTestUtils):
         singleton.refresh_from_db()
         self.assertEqual(singleton.get_parent().specific_class, TrashCanPage)
         self.assertTrue(TrashCan.objects.filter(page_id=singleton.id).exists())
+
+    def test_delete_get_shows_confirmation_without_trashing(self):
+        home = Page.objects.get(url_path="/home/")
+        page = home.add_child(instance=Page(title="page"))
+
+        response = self.client.get(
+            reverse("wagtailadmin_pages:delete", args=(page.id,))
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Page.objects.get(id=page.id).get_parent().id, home.id)
+        self.assertFalse(TrashCan.objects.exists())
+
+    def test_deleting_page_in_trash_deletes_it_permanently(self):
+        home = Page.objects.get(url_path="/home/")
+        page = home.add_child(instance=Page(title="page"))
+        child = page.add_child(instance=Page(title="child"))
+        delete_url = reverse("wagtailadmin_pages:delete", args=(page.id,))
+        self.client.post(delete_url)
+
+        self.client.post(delete_url)
+
+        self.assertFalse(Page.objects.filter(id__in=[page.id, child.id]).exists())
+        self.assertFalse(TrashCan.objects.exists())
+
+    def test_bulk_deleting_page_in_trash_deletes_it_permanently(self):
+        home = Page.objects.get(url_path="/home/")
+        page = home.add_child(instance=Page(title="page"))
+        child = page.add_child(instance=Page(title="child"))
+        bulk_delete_url = (
+            reverse("wagtail_bulk_action", args=("wagtailcore", "page", "delete"))
+            + f"?id={page.id}"
+        )
+        self.client.post(bulk_delete_url)
+        self.assertTrue(TrashCan.objects.filter(page_id=page.id).exists())
+
+        self.client.post(bulk_delete_url)
+
+        self.assertFalse(Page.objects.filter(id__in=[page.id, child.id]).exists())
+        self.assertFalse(TrashCan.objects.exists())
+
+    def test_delete_redirects_to_next(self):
+        home = Page.objects.get(url_path="/home/")
+        page = home.add_child(instance=Page(title="page"))
+        next_url = reverse("wagtailadmin_home")
+
+        response = self.client.post(
+            reverse("wagtailadmin_pages:delete", args=(page.id,)), {"next": next_url}
+        )
+
+        self.assertRedirects(response, next_url, fetch_redirect_response=False)
+
+    def test_delete_ignores_external_next(self):
+        home = Page.objects.get(url_path="/home/")
+        page = home.add_child(instance=Page(title="page"))
+
+        response = self.client.post(
+            reverse("wagtailadmin_pages:delete", args=(page.id,)),
+            {"next": "https://evil.example/"},
+        )
+
+        self.assertRedirects(
+            response,
+            reverse("wagtailadmin_explore", args=(home.id,)),
+            fetch_redirect_response=False,
+        )
+
+    def test_bulk_delete_redirects_to_next(self):
+        home = Page.objects.get(url_path="/home/")
+        page = home.add_child(instance=Page(title="page"))
+        next_url = reverse("wagtailadmin_home")
+
+        response = self.client.post(
+            reverse("wagtail_bulk_action", args=("wagtailcore", "page", "delete"))
+            + f"?id={page.id}&next={next_url}"
+        )
+
+        self.assertRedirects(response, next_url, fetch_redirect_response=False)
+
+    def test_bulk_delete_ignores_external_next(self):
+        home = Page.objects.get(url_path="/home/")
+        page = home.add_child(instance=Page(title="page"))
+
+        response = self.client.post(
+            reverse("wagtail_bulk_action", args=("wagtailcore", "page", "delete"))
+            + f"?id={page.id}&next=https://evil.example/"
+        )
+
+        self.assertRedirects(
+            response,
+            reverse("wagtailadmin_explore", args=(home.id,)),
+            fetch_redirect_response=False,
+        )
+
+    def test_trash_index_delete_get_shows_confirmation_without_deleting(self):
+        home = Page.objects.get(url_path="/home/")
+        page = home.add_child(instance=Page(title="page"))
+        self.client.post(reverse("wagtailadmin_pages:delete", args=(page.id,)))
+        rb = TrashCan.objects.get(page_id=page.id)
+
+        response = self.client.get(
+            trash_admin_url_helper.get_action_url("delete", rb.id)
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(Page.objects.filter(id=page.id).exists())
+        self.assertTrue(TrashCan.objects.filter(id=rb.id).exists())
+
+    def test_trash_index_delete_removes_descendants(self):
+        home = Page.objects.get(url_path="/home/")
+        page = home.add_child(instance=Page(title="page"))
+        child = page.add_child(instance=Page(title="child"))
+        self.client.post(reverse("wagtailadmin_pages:delete", args=(page.id,)))
+        rb = TrashCan.objects.get(page_id=page.id)
+
+        self.client.post(trash_admin_url_helper.get_action_url("delete", rb.id))
+
+        self.assertFalse(Page.objects.filter(id__in=[page.id, child.id]).exists())
+        self.assertFalse(TrashCan.objects.exists())
