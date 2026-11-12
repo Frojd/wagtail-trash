@@ -481,12 +481,10 @@ class TestAdmin(TestCase, WagtailTestUtils):
         page = home.add_child(instance=Page(title="page"))
         trash_page(self.client, page)
 
-        marker ='<script src="/editor-js-hook-marker.js"></script>'
+        marker = '<script src="/editor-js-hook-marker.js"></script>'
 
         with self.register_hook("insert_editor_js", lambda: marker):
-            response = self.client.get(
-                reverse("wagtail_trash_move", args=(page.id,))
-            )
+            response = self.client.get(reverse("wagtail_trash_move", args=(page.id,)))
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content.decode().count(marker), 1)
@@ -521,6 +519,18 @@ class TestAdmin(TestCase, WagtailTestUtils):
         page.refresh_from_db()
         self.assertEqual(page.get_parent().id, home.id)
         self.assertFalse(TrashCan.objects.filter(page_id=page.id).exists())
+
+    def test_restore_keeps_trash_like_text_in_original_slug(self):
+        home = Page.objects.get(url_path="/home/")
+        page = home.add_child(
+            instance=Page(title="tips", slug="recycling-trash-5-tips")
+        )
+        trash_page(self.client, page)
+
+        self.client.post(reverse("wagtail_trash_restore", args=(page.id,)))
+
+        page.refresh_from_db()
+        self.assertEqual(page.slug, "recycling-trash-5-tips")
 
     def test_restore_unknown_page_returns_404(self):
         response = self.client.post(reverse("wagtail_trash_restore", args=(999999,)))

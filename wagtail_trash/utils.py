@@ -84,7 +84,7 @@ def restore_and_move_page(rb, move_to_page, request):
             _("You do not have permission to restore the page to this location.")
         )
 
-    slug = re.sub(r"trash-\d+-", "", rb.page.slug)
+    slug = re.sub(rf"^trash-{rb.page.id}-", "", rb.page.slug)
 
     if move_to_page.get_children().filter(slug=slug).exists():
         raise RestoreError(

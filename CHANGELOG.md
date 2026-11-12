@@ -33,6 +33,7 @@
 - Ignore /plans/ dir for boilerplate (@marteinn)
 - Pin GitHub Actions to commit SHAs and upgrade checkout and setup-python to v7 for Node.js 24 (@marteinn)
 - Remove redundant hook registrations in tests, add trash_page test helper and add missing assertions (@marteinn)
+- Only strip the trash prefix from the slug when restoring a page, so slugs containing trash-N- are kept intact (@marteinn)
 
 ### Removed
 - Drop support for Wagtail versions below 7.4 (@marteinn)
