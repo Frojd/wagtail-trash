@@ -477,11 +477,11 @@ class TestAdmin(TestCase, WagtailTestUtils):
         self.assertTrue(TrashCan.objects.filter(page_id=page.id).exists())
 
     def test_move_view_includes_editor_js_hook_output(self):
-        root_page = Page.objects.get(url_path="/")
-        page = Page(title="page")
-        root_page.add_child(instance=page)
+        home = Page.objects.get(url_path="/home/")
+        page = home.add_child(instance=Page(title="page"))
+        trash_page(self.client, page)
 
-        marker = '<script src="/editor-js-hook-marker.js"></script>'
+        marker ='<script src="/editor-js-hook-marker.js"></script>'
 
         with self.register_hook("insert_editor_js", lambda: marker):
             response = self.client.get(
@@ -526,6 +526,28 @@ class TestAdmin(TestCase, WagtailTestUtils):
         response = self.client.post(reverse("wagtail_trash_restore", args=(999999,)))
 
         self.assertEqual(response.status_code, 404)
+
+    def test_restore_and_move_unknown_page_returns_404(self):
+        move_url = reverse("wagtail_trash_move", args=(999999,))
+        home = Page.objects.get(url_path="/home/")
+
+        self.assertEqual(self.client.get(move_url).status_code, 404)
+        self.assertEqual(
+            self.client.post(move_url, {"move_page": str(home.id)}).status_code, 404
+        )
+
+    def test_restore_and_move_already_restored_page_returns_404(self):
+        home = Page.objects.get(url_path="/home/")
+        page = home.add_child(instance=Page(title="page"))
+        trash_page(self.client, page)
+        self.client.post(reverse("wagtail_trash_restore", args=(page.id,)))
+        move_url = reverse("wagtail_trash_move", args=(page.id,))
+
+        self.assertEqual(self.client.get(move_url).status_code, 404)
+        self.assertEqual(
+            self.client.post(move_url, {"move_page": str(home.id)}).status_code, 404
+        )
+        self.assertEqual(Page.objects.get(id=page.id).get_parent().id, home.id)
 
     def test_restore_and_move_rejects_destination_disallowed_by_parent_page_types(self):
         home = Page.objects.get(url_path="/home/")

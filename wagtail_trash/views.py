@@ -115,6 +115,8 @@ def trash_delete(request, page):
 
 
 def trash_move(request, page_id):
+    rb = get_object_or_404(TrashCan, page_id=page_id)
+
     if request.method == "POST":
         form = MoveForm(data=request.POST)
         if not form.is_valid():
@@ -126,7 +128,6 @@ def trash_move(request, page_id):
                 },
             )
 
-        rb = TrashCan.objects.get(page_id=page_id)
         move_to_page = form.cleaned_data["move_page"]
 
         try:
