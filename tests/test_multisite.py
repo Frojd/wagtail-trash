@@ -1,9 +1,9 @@
-from django.shortcuts import reverse
 from django.test import TestCase, override_settings
 from wagtail.models import Page, Site
 from wagtail.test.utils import WagtailTestUtils
 
 from tests.app.models import TestPage
+from tests.utils import trash_page
 from wagtail_trash.models import TrashCanPage
 
 
@@ -22,9 +22,7 @@ class TestMultiSite(TestCase, WagtailTestUtils):
         )
 
     def trash(self, page, host):
-        self.client.post(
-            reverse("wagtailadmin_pages:delete", args=(page.id,)), HTTP_HOST=host
-        )
+        trash_page(self.client, page, HTTP_HOST=host)
 
     def test_each_site_gets_its_own_trash_can(self):
         self.trash(self.page, "localhost")

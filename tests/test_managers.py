@@ -4,7 +4,7 @@ from wagtail.models import Page
 from wagtail.test.utils import WagtailTestUtils
 
 from tests.app.models import TestPage
-from wagtail_trash.views import trash_delete
+from tests.utils import trash_page
 
 
 class TestManagers(TestCase, WagtailTestUtils):
@@ -12,8 +12,6 @@ class TestManagers(TestCase, WagtailTestUtils):
         self.login()
 
     def test_manager(self):
-        from wagtail_trash.wagtail_hooks import urlconf_time
-
         root_page = Page.objects.get(url_path="/")
 
         top_page = TestPage(title="top_page")
@@ -28,23 +26,18 @@ class TestManagers(TestCase, WagtailTestUtils):
         self.assertEqual(TestPage.objects.count(), 3)
         self.assertEqual(TestPage.objects_excluding_bins.count(), 3)
 
-        with self.register_hook("before_delete_page", trash_delete):
-            delete_url = reverse("wagtailadmin_pages:delete", args=(sub_sub_page.id,))
-            self.client.post(delete_url)
+        trash_page(self.client, sub_sub_page)
 
         self.assertEqual(TestPage.objects.count(), 3)
         self.assertEqual(TestPage.objects_excluding_bins.count(), 2)
 
-        with self.register_hook("register_admin_urls", urlconf_time):
-            restore_url = reverse("wagtail_trash_restore", args=(sub_sub_page.id,))
-            self.client.post(restore_url)
+        restore_url = reverse("wagtail_trash_restore", args=(sub_sub_page.id,))
+        self.client.post(restore_url)
 
         self.assertEqual(TestPage.objects.count(), 3)
         self.assertEqual(TestPage.objects_excluding_bins.count(), 3)
 
-        with self.register_hook("before_delete_page", trash_delete):
-            delete_url = reverse("wagtailadmin_pages:delete", args=(top_page.id,))
-            self.client.post(delete_url)
+        trash_page(self.client, top_page)
 
         self.assertEqual(TestPage.objects.count(), 3)
         self.assertEqual(TestPage.objects_excluding_bins.count(), 0)

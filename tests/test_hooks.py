@@ -5,6 +5,7 @@ from django.test import TestCase
 from wagtail.models import Page
 from wagtail.test.utils import WagtailTestUtils
 
+from tests.utils import trash_page
 from wagtail_trash.models import TrashCanPage
 
 
@@ -14,7 +15,7 @@ class TestHiddenTrashCan(TestCase, WagtailTestUtils):
         self.home = Page.objects.get(url_path="/home/")
         self.sibling = self.home.add_child(instance=Page(title="sibling"))
         page = self.home.add_child(instance=Page(title="page"))
-        self.client.post(reverse("wagtailadmin_pages:delete", args=(page.id,)))
+        trash_page(self.client, page)
         self.trash_can = TrashCanPage.objects.get()
         self.assertEqual(self.trash_can.get_parent().id, self.home.id)
 

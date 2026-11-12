@@ -5,8 +5,8 @@ from wagtail.models import Page
 from wagtail.test.utils import WagtailTestUtils
 
 from tests.app.models import ArticlePage, SectionPage, SingletonPage, TestPage
+from tests.utils import trash_page
 from wagtail_trash.models import TrashCan, TrashCanPage
-from wagtail_trash.views import trash_bulk_delete, trash_delete
 from wagtail_trash.wagtail_hooks import TrashCanModelAdmin
 
 trash_admin_url_helper = TrashCanModelAdmin().url_helper
@@ -23,9 +23,13 @@ class TestAdmin(TestCase, WagtailTestUtils):
 
         self.client.get(index_url)
 
-        assert TrashCanPage.objects.count() == 1
+        trash_can = TrashCanPage.objects.get()
+        self.assertEqual(trash_can.get_parent().url_path, "/home/")
+        self.assertFalse(trash_can.live)
 
         self.client.get(index_url)
+
+        self.assertEqual(TrashCanPage.objects.get().id, trash_can.id)
 
     def test_buttons(self):
         root_page = Page.objects.get(url_path="/")
@@ -39,12 +43,9 @@ class TestAdmin(TestCase, WagtailTestUtils):
         sub_sub_page = Page(title="sub_sub_page")
         sub_page.add_child(instance=sub_sub_page)
 
-        with self.register_hook("before_delete_page", trash_delete):
-            delete_url = reverse("wagtailadmin_pages:delete", args=(sub_sub_page.id,))
-            self.client.post(delete_url)
+        trash_page(self.client, sub_sub_page)
 
-            delete_url = reverse("wagtailadmin_pages:delete", args=(top_page.id,))
-            self.client.post(delete_url)
+        trash_page(self.client, top_page)
 
         index = trash_admin_url_helper.get_action_url("index")
         resp = self.client.get(index)
@@ -71,7 +72,7 @@ class TestAdmin(TestCase, WagtailTestUtils):
         parent = home.add_child(instance=Page(title="<script>alert(1)</script>"))
         parent.add_child(instance=Page(title="<img src=x onerror=alert(2)>"))
 
-        self.client.post(reverse("wagtailadmin_pages:delete", args=(parent.id,)))
+        trash_page(self.client, parent)
 
         content = self.client.get(
             trash_admin_url_helper.get_action_url("index")
@@ -93,9 +94,7 @@ class TestAdmin(TestCase, WagtailTestUtils):
 
         assert TrashCan.objects.count() == 0
 
-        with self.register_hook("before_delete_page", trash_delete):
-            delete_url = reverse("wagtailadmin_pages:delete", args=(new_page.id,))
-            self.client.post(delete_url)
+        trash_page(self.client, new_page)
 
         new_page = Page.objects.filter(title="new page")
 
@@ -111,9 +110,7 @@ class TestAdmin(TestCase, WagtailTestUtils):
 
         assert len(new_page.get_sitemap_urls()) != 0
 
-        with self.register_hook("before_delete_page", trash_delete):
-            delete_url = reverse("wagtailadmin_pages:delete", args=(new_page.id,))
-            self.client.post(delete_url)
+        trash_page(self.client, new_page)
 
         trash_can_page = TrashCanPage.objects.first()
         new_page.refresh_from_db()
@@ -121,8 +118,6 @@ class TestAdmin(TestCase, WagtailTestUtils):
         assert len(new_page.get_sitemap_urls()) == 0
 
     def test_bulk_delete_sets_and_unsets_slug(self):
-        from wagtail_trash.wagtail_hooks import urlconf_time
-
         root_page = Page.objects.get(url_path="/")
 
         new_page1 = Page(title="new page 1")
@@ -131,19 +126,17 @@ class TestAdmin(TestCase, WagtailTestUtils):
 
         p1_slug = p1.slug
 
-        with self.register_hook("before_bulk_action", trash_bulk_delete):
-            delete_url = reverse(
-                "wagtail_bulk_action", args=("wagtailcore", "page", "delete")
-            )
-            id_query = "?id=" + "&id=".join([str(p1.id)])
-            self.client.post(delete_url + id_query)
+        delete_url = reverse(
+            "wagtail_bulk_action", args=("wagtailcore", "page", "delete")
+        )
+        id_query = "?id=" + "&id=".join([str(p1.id)])
+        self.client.post(delete_url + id_query)
 
         p1.refresh_from_db()
         self.assertEqual(f"trash-{p1.pk}-{p1_slug}", p1.slug)
 
-        with self.register_hook("register_admin_urls", urlconf_time):
-            restore_url = reverse("wagtail_trash_restore", args=(p1.pk,))
-            self.client.post(restore_url)
+        restore_url = reverse("wagtail_trash_restore", args=(p1.pk,))
+        self.client.post(restore_url)
 
         p1.refresh_from_db()
         self.assertEqual(p1_slug, p1.slug)
@@ -163,14 +156,13 @@ class TestAdmin(TestCase, WagtailTestUtils):
 
         assert TrashCan.objects.count() == 0
 
-        with self.register_hook("before_bulk_action", trash_bulk_delete):
-            delete_url = reverse(
-                "wagtail_bulk_action", args=("wagtailcore", "page", "delete")
-            )
-            id_query = "?id=" + "&id=".join(
-                [str(p1.id), str(p2.id), str(p3.id), str(p4.id)]
-            )
-            self.client.post(delete_url + id_query)
+        delete_url = reverse(
+            "wagtail_bulk_action", args=("wagtailcore", "page", "delete")
+        )
+        id_query = "?id=" + "&id=".join(
+            [str(p1.id), str(p2.id), str(p3.id), str(p4.id)]
+        )
+        self.client.post(delete_url + id_query)
 
         assert TrashCan.objects.count() == 4
 
@@ -180,19 +172,17 @@ class TestAdmin(TestCase, WagtailTestUtils):
         new_page = Page(title="delete page")
         root_page.add_child(instance=new_page)
 
-        with self.register_hook("before_delete_page", trash_delete):
-            delete_url = reverse("wagtailadmin_pages:delete", args=(new_page.id,))
-            self.client.post(delete_url)
-            assert TrashCan.objects.count() == 1
+        trash_page(self.client, new_page)
+        assert TrashCan.objects.count() == 1
 
-            trash_can_item = TrashCan.objects.first()
-            delete_url = trash_admin_url_helper.get_action_url(
-                "delete",
-                trash_can_item.id,
-            )
-            self.client.post(delete_url)
-            assert not Page.objects.filter(title="delete page")
-            assert TrashCan.objects.count() == 0
+        trash_can_item = TrashCan.objects.first()
+        delete_url = trash_admin_url_helper.get_action_url(
+            "delete",
+            trash_can_item.id,
+        )
+        self.client.post(delete_url)
+        assert not Page.objects.filter(title="delete page")
+        assert TrashCan.objects.count() == 0
 
     def test_removing_two_pages_with_same_slug(self):
         root_page = Page.objects.get(url_path="/")
@@ -207,13 +197,10 @@ class TestAdmin(TestCase, WagtailTestUtils):
         delete_2 = Page(title="delete", slug="delete")
         cat_instance_2.add_child(instance=delete_2)
 
-        with self.register_hook("before_delete_page", trash_delete):
-            delete_url = reverse("wagtailadmin_pages:delete", args=(delete.id,))
-            self.client.post(delete_url)
-            delete_url = reverse("wagtailadmin_pages:delete", args=(delete_2.id,))
-            self.client.post(delete_url)
+        trash_page(self.client, delete)
+        trash_page(self.client, delete_2)
 
-            self.assertEqual(TrashCan.objects.count(), 2)
+        self.assertEqual(TrashCan.objects.count(), 2)
 
     def test_removing_page_unpublishes_all_sub_pages(self):
         root_page = Page.objects.get(url_path="/")
@@ -233,9 +220,7 @@ class TestAdmin(TestCase, WagtailTestUtils):
         self.assertEqual(top.get_descendants(inclusive=True).live().count(), 2)
         self.assertEqual(top.get_descendants(inclusive=True).not_live().count(), 2)
 
-        with self.register_hook("before_delete_page", trash_delete):
-            delete_url = reverse("wagtailadmin_pages:delete", args=(top.id,))
-            self.client.post(delete_url)
+        trash_page(self.client, top)
 
         top.refresh_from_db()
 
@@ -243,8 +228,6 @@ class TestAdmin(TestCase, WagtailTestUtils):
         self.assertEqual(top.get_descendants(inclusive=True).not_live().count(), 4)
 
     def test_restoring_page_re_publishes(self):
-        from wagtail_trash.wagtail_hooks import urlconf_time
-
         root_page = Page.objects.get(url_path="/")
 
         top = Page(title="1p", has_unpublished_changes=False, live=True)
@@ -262,18 +245,15 @@ class TestAdmin(TestCase, WagtailTestUtils):
         self.assertEqual(top.get_descendants(inclusive=True).live().count(), 2)
         self.assertEqual(top.get_descendants(inclusive=True).not_live().count(), 2)
 
-        with self.register_hook("before_delete_page", trash_delete):
-            delete_url = reverse("wagtailadmin_pages:delete", args=(top.id,))
-            self.client.post(delete_url)
+        trash_page(self.client, top)
 
         top.refresh_from_db()
 
         self.assertEqual(top.get_descendants(inclusive=True).live().count(), 0)
         self.assertEqual(top.get_descendants(inclusive=True).not_live().count(), 4)
 
-        with self.register_hook("register_admin_urls", urlconf_time):
-            restore_url = reverse("wagtail_trash_restore", args=(top.id,))
-            self.client.post(restore_url)
+        restore_url = reverse("wagtail_trash_restore", args=(top.id,))
+        self.client.post(restore_url)
 
         top.refresh_from_db()
 
@@ -283,8 +263,6 @@ class TestAdmin(TestCase, WagtailTestUtils):
         self.assertEqual(TrashCanPage.objects.first().get_children().count(), 0)
 
     def test_restoring_page_preserves_old_url(self):
-        from wagtail_trash.wagtail_hooks import urlconf_time
-
         root_page = Page.objects.get(url_path="/home/")
 
         top = Page(title="1p", has_unpublished_changes=False, live=True)
@@ -298,25 +276,20 @@ class TestAdmin(TestCase, WagtailTestUtils):
 
         original_top_url = top.url_path
 
-        with self.register_hook("before_delete_page", trash_delete):
-            delete_url = reverse("wagtailadmin_pages:delete", args=(top.id,))
-            self.client.post(delete_url)
+        trash_page(self.client, top)
 
         top.refresh_from_db()
 
         self.assertNotEqual(original_top_url, top.url_path)
 
-        with self.register_hook("register_admin_urls", urlconf_time):
-            restore_url = reverse("wagtail_trash_restore", args=(top.id,))
-            self.client.post(restore_url)
+        restore_url = reverse("wagtail_trash_restore", args=(top.id,))
+        self.client.post(restore_url)
 
         top.refresh_from_db()
 
         self.assertEqual(original_top_url, top.url_path)
 
     def test_restoring_page_custom_move_to(self):
-        from wagtail_trash.wagtail_hooks import urlconf_time
-
         root_page = Page.objects.get(url_path="/")
 
         top = Page(title="1p", has_unpublished_changes=False, live=True)
@@ -325,18 +298,15 @@ class TestAdmin(TestCase, WagtailTestUtils):
         sub_page = Page(title="1p 1u", has_unpublished_changes=True, live=False)
         top.add_child(instance=sub_page)
 
-        with self.register_hook("before_delete_page", trash_delete):
-            delete_url = reverse("wagtailadmin_pages:delete", args=(sub_page.id,))
-            self.client.post(delete_url)
+        trash_page(self.client, sub_page)
 
         sub_page.refresh_from_db()
 
-        with self.register_hook("register_admin_urls", urlconf_time):
-            restore_url = reverse(
-                "wagtail_trash_move",
-                args=(sub_page.id,),
-            )
-            self.client.post(restore_url, {"move_page": str(root_page.id)})
+        restore_url = reverse(
+            "wagtail_trash_move",
+            args=(sub_page.id,),
+        )
+        self.client.post(restore_url, {"move_page": str(root_page.id)})
 
         sub_page.refresh_from_db()
 
@@ -348,8 +318,6 @@ class TestAdmin(TestCase, WagtailTestUtils):
         self.assertEqual(TrashCan.objects.count(), 0)
 
     def test_restoring_page_custom_move_to_without_id_returns_validation_error(self):
-        from wagtail_trash.wagtail_hooks import urlconf_time
-
         root_page = Page.objects.get(url_path="/")
 
         top = Page(title="1p", has_unpublished_changes=False, live=True)
@@ -358,26 +326,23 @@ class TestAdmin(TestCase, WagtailTestUtils):
         sub_page = Page(title="1p 1u", has_unpublished_changes=True, live=False)
         top.add_child(instance=sub_page)
 
-        with self.register_hook("before_delete_page", trash_delete):
-            delete_url = reverse("wagtailadmin_pages:delete", args=(sub_page.id,))
-            self.client.post(delete_url)
+        trash_page(self.client, sub_page)
 
         sub_page.refresh_from_db()
 
-        with self.register_hook("register_admin_urls", urlconf_time):
-            restore_url = reverse(
-                "wagtail_trash_move",
-                args=(sub_page.id,),
-            )
-            response = self.client.post(restore_url, {"move_page": ""})
-            self.assertIn("This field is required", str(response.content))
+        restore_url = reverse(
+            "wagtail_trash_move",
+            args=(sub_page.id,),
+        )
+        response = self.client.post(restore_url, {"move_page": ""})
+        self.assertIn("This field is required", str(response.content))
 
     def test_restore_with_deleted_parent_redirects_to_move(self):
         home = Page.objects.get(url_path="/home/")
         parent = home.add_child(instance=Page(title="parent"))
         child = parent.add_child(instance=Page(title="child"))
 
-        self.client.post(reverse("wagtailadmin_pages:delete", args=(child.id,)))
+        trash_page(self.client, child)
         Page.objects.get(id=parent.id).delete()
 
         response = self.client.post(reverse("wagtail_trash_restore", args=(child.id,)))
@@ -396,7 +361,7 @@ class TestAdmin(TestCase, WagtailTestUtils):
         home = Page.objects.get(url_path="/home/")
         page = home.add_child(instance=Page(title="page", slug="page"))
 
-        self.client.post(reverse("wagtailadmin_pages:delete", args=(page.id,)))
+        trash_page(self.client, page)
         home.add_child(instance=Page(title="replacement", slug="page"))
 
         response = self.client.post(reverse("wagtail_trash_restore", args=(page.id,)))
@@ -417,7 +382,7 @@ class TestAdmin(TestCase, WagtailTestUtils):
     def test_restore_and_move_with_slug_conflict_shows_form_error(self):
         home = Page.objects.get(url_path="/home/")
         page = home.add_child(instance=Page(title="page", slug="page"))
-        self.client.post(reverse("wagtailadmin_pages:delete", args=(page.id,)))
+        trash_page(self.client, page)
 
         destination = home.add_child(instance=Page(title="destination"))
         destination.add_child(instance=Page(title="occupant", slug="page"))
@@ -442,8 +407,8 @@ class TestAdmin(TestCase, WagtailTestUtils):
         parent = home.add_child(instance=Page(title="parent"))
         child = parent.add_child(instance=Page(title="child"))
 
-        self.client.post(reverse("wagtailadmin_pages:delete", args=(child.id,)))
-        self.client.post(reverse("wagtailadmin_pages:delete", args=(parent.id,)))
+        trash_page(self.client, child)
+        trash_page(self.client, parent)
 
         response = self.client.post(reverse("wagtail_trash_restore", args=(child.id,)))
 
@@ -465,10 +430,8 @@ class TestAdmin(TestCase, WagtailTestUtils):
         trashed_section = home.add_child(instance=Page(title="trashed section"))
         destination = trashed_section.add_child(instance=Page(title="destination"))
 
-        self.client.post(reverse("wagtailadmin_pages:delete", args=(page.id,)))
-        self.client.post(
-            reverse("wagtailadmin_pages:delete", args=(trashed_section.id,))
-        )
+        trash_page(self.client, page)
+        trash_page(self.client, trashed_section)
 
         response = self.client.post(
             reverse("wagtail_trash_move", args=(page.id,)),
@@ -488,7 +451,7 @@ class TestAdmin(TestCase, WagtailTestUtils):
     def test_restore_and_move_with_unknown_destination_shows_form_error(self):
         home = Page.objects.get(url_path="/home/")
         page = home.add_child(instance=Page(title="page"))
-        self.client.post(reverse("wagtailadmin_pages:delete", args=(page.id,)))
+        trash_page(self.client, page)
 
         response = self.client.post(
             reverse("wagtail_trash_move", args=(page.id,)),
@@ -501,38 +464,29 @@ class TestAdmin(TestCase, WagtailTestUtils):
         )
         self.assertTrue(TrashCan.objects.filter(page_id=page.id).exists())
 
-    def test_move_view_renders(self):
-        from wagtail_trash.wagtail_hooks import urlconf_time
+    def test_move_view_renders_destination_form(self):
+        home = Page.objects.get(url_path="/home/")
+        page = home.add_child(instance=Page(title="page"))
+        trash_page(self.client, page)
 
-        root_page = Page.objects.get(url_path="/")
+        response = self.client.get(reverse("wagtail_trash_move", args=(page.id,)))
 
-        top = Page(title="1p", has_unpublished_changes=False, live=True)
-        root_page.add_child(instance=top)
-
-        sub_page = Page(title="1p 1u", has_unpublished_changes=True, live=False)
-        top.add_child(instance=sub_page)
-
-        with self.register_hook("register_admin_urls", urlconf_time):
-            restore_url = reverse(
-                "wagtail_trash_move",
-                args=(sub_page.id,),
-            )
-            self.client.post(restore_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'name="move_page"')
+        self.assertContains(response, "csrfmiddlewaretoken")
+        self.assertTrue(TrashCan.objects.filter(page_id=page.id).exists())
 
     def test_move_view_includes_editor_js_hook_output(self):
-        from wagtail_trash.wagtail_hooks import urlconf_time
-
         root_page = Page.objects.get(url_path="/")
         page = Page(title="page")
         root_page.add_child(instance=page)
 
         marker = '<script src="/editor-js-hook-marker.js"></script>'
 
-        with self.register_hook("register_admin_urls", urlconf_time):
-            with self.register_hook("insert_editor_js", lambda: marker):
-                response = self.client.get(
-                    reverse("wagtail_trash_move", args=(page.id,))
-                )
+        with self.register_hook("insert_editor_js", lambda: marker):
+            response = self.client.get(
+                reverse("wagtail_trash_move", args=(page.id,))
+            )
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content.decode().count(marker), 1)
@@ -540,7 +494,7 @@ class TestAdmin(TestCase, WagtailTestUtils):
     def test_restore_get_shows_confirmation_without_restoring(self):
         home = Page.objects.get(url_path="/home/")
         page = home.add_child(instance=Page(title="page", slug="page"))
-        self.client.post(reverse("wagtailadmin_pages:delete", args=(page.id,)))
+        trash_page(self.client, page)
         restore_url = reverse("wagtail_trash_restore", args=(page.id,))
 
         response = self.client.get(restore_url)
@@ -555,7 +509,7 @@ class TestAdmin(TestCase, WagtailTestUtils):
     def test_restore_post_restores_page(self):
         home = Page.objects.get(url_path="/home/")
         page = home.add_child(instance=Page(title="page", slug="page"))
-        self.client.post(reverse("wagtailadmin_pages:delete", args=(page.id,)))
+        trash_page(self.client, page)
 
         response = self.client.post(reverse("wagtail_trash_restore", args=(page.id,)))
 
@@ -577,7 +531,7 @@ class TestAdmin(TestCase, WagtailTestUtils):
         home = Page.objects.get(url_path="/home/")
         section = home.add_child(instance=SectionPage(title="section"))
         article = section.add_child(instance=ArticlePage(title="article"))
-        self.client.post(reverse("wagtailadmin_pages:delete", args=(article.id,)))
+        trash_page(self.client, article)
 
         response = self.client.post(
             reverse("wagtail_trash_move", args=(article.id,)),
@@ -599,7 +553,7 @@ class TestAdmin(TestCase, WagtailTestUtils):
         section = home.add_child(instance=SectionPage(title="section"))
         other_section = home.add_child(instance=SectionPage(title="other section"))
         article = section.add_child(instance=ArticlePage(title="article"))
-        self.client.post(reverse("wagtailadmin_pages:delete", args=(article.id,)))
+        trash_page(self.client, article)
 
         self.client.post(
             reverse("wagtail_trash_move", args=(article.id,)),
@@ -616,7 +570,7 @@ class TestAdmin(TestCase, WagtailTestUtils):
         singleton = home.add_child(
             instance=SingletonPage(title="singleton", slug="one")
         )
-        self.client.post(reverse("wagtailadmin_pages:delete", args=(singleton.id,)))
+        trash_page(self.client, singleton)
         home.add_child(instance=SingletonPage(title="replacement", slug="two"))
 
         response = self.client.post(
@@ -731,7 +685,7 @@ class TestAdmin(TestCase, WagtailTestUtils):
     def test_trash_index_delete_get_shows_confirmation_without_deleting(self):
         home = Page.objects.get(url_path="/home/")
         page = home.add_child(instance=Page(title="page"))
-        self.client.post(reverse("wagtailadmin_pages:delete", args=(page.id,)))
+        trash_page(self.client, page)
         rb = TrashCan.objects.get(page_id=page.id)
 
         response = self.client.get(
@@ -746,7 +700,7 @@ class TestAdmin(TestCase, WagtailTestUtils):
         home = Page.objects.get(url_path="/home/")
         page = home.add_child(instance=Page(title="page"))
         child = page.add_child(instance=Page(title="child"))
-        self.client.post(reverse("wagtailadmin_pages:delete", args=(page.id,)))
+        trash_page(self.client, page)
         rb = TrashCan.objects.get(page_id=page.id)
 
         self.client.post(trash_admin_url_helper.get_action_url("delete", rb.id))

@@ -5,6 +5,7 @@ from django.test import TestCase
 from wagtail.models import GroupPagePermission, Page
 from wagtail.test.utils import WagtailTestUtils
 
+from tests.utils import trash_page
 from wagtail_trash.models import TrashCan
 from wagtail_trash.wagtail_hooks import TrashCanModelAdmin
 
@@ -49,7 +50,7 @@ class TestPermissions(TestCase, WagtailTestUtils):
 
     def trash(self, page, user):
         self.client.force_login(user)
-        self.client.post(reverse("wagtailadmin_pages:delete", args=(page.id,)))
+        trash_page(self.client, page)
         self.assertTrue(TrashCan.objects.filter(page_id=page.id).exists())
 
     def assert_in_trash(self, page):

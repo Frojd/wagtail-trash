@@ -31,6 +31,7 @@
 - Exclude descendants of trashed pages from the sitemap when using SkipSitemapIfInTrashMixin (@marteinn)
 - Ignore /plans/ dir for boilerplate (@marteinn)
 - Pin GitHub Actions to commit SHAs and upgrade checkout and setup-python to v7 for Node.js 24 (@marteinn)
+- Remove redundant hook registrations in tests, add trash_page test helper and add missing assertions (@marteinn)
 
 ### Removed
 - Drop support for Wagtail versions below 7.4 (@marteinn)
