@@ -26,9 +26,11 @@ def get_valid_next_url_from_request(request):
 
 def trash_bulk_delete(request, pages):
     trash_can = trash_can_for_request(request)
+    parent_ids = set()
 
     for page in pages:
         parent = page.get_parent()
+        parent_ids.add(parent.id)
 
         if parent.id == trash_can.id:
             page.delete(user=request.user)
@@ -64,7 +66,10 @@ def trash_bulk_delete(request, pages):
     if next_url:
         return redirect(next_url)
 
-    return redirect("wagtailadmin_explore", parent.id)
+    if len(parent_ids) == 1:
+        return redirect("wagtailadmin_explore", parent_ids.pop())
+
+    return redirect("wagtailadmin_explore_root")
 
 
 def trash_delete(request, page):

@@ -714,6 +714,24 @@ class TestAdmin(TestCase, WagtailTestUtils):
             fetch_redirect_response=False,
         )
 
+    def test_bulk_delete_with_mixed_parents_redirects_to_explorer_root(self):
+        home = Page.objects.get(url_path="/home/")
+        section = home.add_child(instance=Page(title="section"))
+        page = home.add_child(instance=Page(title="page"))
+        other_page = section.add_child(instance=Page(title="other page"))
+
+        response = self.client.post(
+            reverse("wagtail_bulk_action", args=("wagtailcore", "page", "delete"))
+            + f"?id={page.id}&id={other_page.id}"
+        )
+
+        self.assertRedirects(
+            response,
+            reverse("wagtailadmin_explore_root"),
+            fetch_redirect_response=False,
+        )
+        self.assertEqual(TrashCan.objects.count(), 2)
+
     def test_trash_index_delete_get_shows_confirmation_without_deleting(self):
         home = Page.objects.get(url_path="/home/")
         page = home.add_child(instance=Page(title="page"))

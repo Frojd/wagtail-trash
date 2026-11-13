@@ -125,3 +125,22 @@ class TestPermissions(TestCase, WagtailTestUtils):
 
         self.assert_restored_under(page, self.section)
         self.assertFalse(Page.objects.get(id=page.id).live)
+
+    def test_bulk_delete_of_only_forbidden_pages_redirects_to_explorer_root(self):
+        page = self.other_section.add_child(instance=Page(title="page"))
+        self.client.force_login(self.editor)
+
+        response = self.client.post(
+            reverse("wagtail_bulk_action", args=("wagtailcore", "page", "delete"))
+            + f"?id={page.id}"
+        )
+
+        self.assertRedirects(
+            response,
+            reverse("wagtailadmin_explore_root"),
+            fetch_redirect_response=False,
+        )
+        self.assertEqual(
+            Page.objects.get(id=page.id).get_parent().id, self.other_section.id
+        )
+        self.assertFalse(TrashCan.objects.exists())
