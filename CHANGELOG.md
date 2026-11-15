@@ -37,6 +37,7 @@
 - Redirect bulk delete to the explorer root instead of crashing or picking an arbitrary parent when pages have no shared parent (@marteinn)
 - Add tests for bulk actions other than delete and for excluding restore buttons, reaching full branch coverage (@marteinn)
 - Move the shared trash logic of single and bulk delete into move_to_trash (@marteinn)
+- Silence treebeard manager warnings from Wagtail releases before 7.4.3 in the test settings (@marteinn)
 
 ### Removed
 - Drop support for Wagtail versions below 7.4 (@marteinn)

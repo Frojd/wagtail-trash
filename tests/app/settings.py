@@ -2,6 +2,8 @@
 
 import os
 
+import wagtail
+
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
@@ -82,3 +84,7 @@ TEMPLATES = [
 ]
 
 WAGTAILADMIN_BASE_URL = "http://localhost:8080"
+
+# Wagtail < 7.4.3 page and collection managers do not subclass MP_NodeManager
+if wagtail.VERSION[:3] < (7, 4, 3):
+    SILENCED_SYSTEM_CHECKS = ["treebeard.E001"]
