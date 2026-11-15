@@ -1,15 +1,13 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext as _
-from treebeard.mp_tree import MP_MoveHandler
 from wagtail.admin import messages
-from wagtail.models import Page
 
 from .forms import MoveForm
 from .models import TrashCan
 from .utils import (
     RestoreError,
-    generate_page_data,
+    move_to_trash,
     restore_and_move_page,
     trash_can_for_request,
 )
@@ -39,27 +37,7 @@ def trash_bulk_delete(request, pages):
                 request, _("Page '{0}' deleted.").format(page.get_admin_display_title())
             )
         else:
-            TrashCan.objects.create(
-                page=page,
-                parent=parent,
-                user=request.user,
-                data=generate_page_data(page),
-            )
-
-            page.slug = f"trash-{page.id}-{page.slug}"
-            page.save()
-            page.get_descendants(inclusive=True).unpublish()
-
-            # Preserve the url path
-            old_page = Page.objects.get(id=page.id)
-            new_url_path = old_page.set_url_path(parent=trash_can)
-
-            MP_MoveHandler(page, trash_can, "first-child").process()
-
-            # And reset the url path when in trash
-            new_page = Page.objects.get(id=page.id)
-            new_page.url_path = new_url_path
-            new_page.save()
+            move_to_trash(page, trash_can, request.user)
 
     next_url = get_valid_next_url_from_request(request)
 
@@ -87,24 +65,7 @@ def trash_delete(request, page):
             request, _("Page '{0}' deleted.").format(page.get_admin_display_title())
         )
     else:
-        TrashCan.objects.create(
-            page=page, parent=parent, user=request.user, data=generate_page_data(page)
-        )
-
-        page.slug = f"trash-{page.id}-{page.slug}"
-        page.save()
-        page.get_descendants(inclusive=True).unpublish()
-
-        # Preserve the url path
-        old_page = Page.objects.get(id=page.id)
-        new_url_path = old_page.set_url_path(parent=trash_can)
-
-        MP_MoveHandler(page, trash_can, "first-child").process()
-
-        # And reset the url path when in trash
-        new_page = Page.objects.get(id=page.id)
-        new_page.url_path = new_url_path
-        new_page.save()
+        move_to_trash(page, trash_can, request.user)
 
         messages.success(
             request,

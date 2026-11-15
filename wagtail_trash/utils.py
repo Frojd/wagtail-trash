@@ -2,10 +2,11 @@ import json
 import re
 
 from django.utils.translation import gettext as _
+from treebeard.mp_tree import MP_MoveHandler
 from wagtail.actions.move_page import MovePageAction
 from wagtail.models import Page, Site
 
-from .models import TrashCanPage
+from .models import TrashCan, TrashCanPage
 
 
 def trash_can_for_request(request):
@@ -39,6 +40,26 @@ def generate_page_data(page):
     }
 
     return json.dumps(data)
+
+
+def move_to_trash(page, trash_can, user):
+    TrashCan.objects.create(
+        page=page,
+        parent=page.get_parent(),
+        user=user,
+        data=generate_page_data(page),
+    )
+
+    page.slug = f"trash-{page.id}-{page.slug}"
+    page.save()
+    page.get_descendants(inclusive=True).unpublish()
+
+    # Keep the original url path while the page is in the trash can
+    new_url_path = Page.objects.get(id=page.id).set_url_path(parent=trash_can)
+    MP_MoveHandler(page, trash_can, "first-child").process()
+    moved_page = Page.objects.get(id=page.id)
+    moved_page.url_path = new_url_path
+    moved_page.save()
 
 
 def is_in_trash(page):
