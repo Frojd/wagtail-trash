@@ -67,6 +67,21 @@ class TestAdmin(TestCase, WagtailTestUtils):
             reverse("wagtail_trash_move", args=(top_page.id,)) in str(resp.content)
         )
 
+    def test_buttons_excluding_restore_omits_restore_buttons(self):
+        home = Page.objects.get(url_path="/home/")
+        page = home.add_child(instance=Page(title="page"))
+        trash_page(self.client, page)
+        response = self.client.get(trash_admin_url_helper.get_action_url("index"))
+        button_helper = response.context["view"].button_helper
+
+        buttons = button_helper.get_buttons_for_obj(
+            TrashCan.objects.get(page_id=page.id), exclude=["restore"]
+        )
+
+        urls = [button["url"] for button in buttons]
+        self.assertNotIn(reverse("wagtail_trash_restore", args=(page.id,)), urls)
+        self.assertNotIn(reverse("wagtail_trash_move", args=(page.id,)), urls)
+
     def test_index_escapes_page_titles(self):
         home = Page.objects.get(url_path="/home/")
         parent = home.add_child(instance=Page(title="<script>alert(1)</script>"))
@@ -731,6 +746,20 @@ class TestAdmin(TestCase, WagtailTestUtils):
             fetch_redirect_response=False,
         )
         self.assertEqual(TrashCan.objects.count(), 2)
+
+    def test_bulk_unpublish_does_not_send_pages_to_trash_can(self):
+        home = Page.objects.get(url_path="/home/")
+        page = home.add_child(instance=Page(title="page"))
+
+        self.client.post(
+            reverse("wagtail_bulk_action", args=("wagtailcore", "page", "unpublish"))
+            + f"?id={page.id}"
+        )
+
+        page.refresh_from_db()
+        self.assertFalse(page.live)
+        self.assertEqual(page.get_parent().id, home.id)
+        self.assertFalse(TrashCan.objects.exists())
 
     def test_trash_index_delete_get_shows_confirmation_without_deleting(self):
         home = Page.objects.get(url_path="/home/")
