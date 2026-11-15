@@ -14,7 +14,7 @@ env:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         python-version: ["3.11", "3.12", "3.13", "3.14"]
@@ -47,7 +47,7 @@ jobs:
         DJANGO_SETTINGS_MODULE: tests.app.settings_with_wagtail_modeladmin
 
   test-lowest:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
@@ -67,7 +67,7 @@ jobs:
         DJANGO_SETTINGS_MODULE: tests.app.settings_with_wagtail_modeladmin
 
   lint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -85,7 +85,7 @@ jobs:
         run: uv run --frozen --no-sync isort . --check-only
 
   security:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -103,7 +103,7 @@ jobs:
           format: table
 
   security-actions:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -124,3 +124,6 @@ jobs:
     needs: [lint, test, test-lowest, security, security-actions]
     if: startsWith(github.ref, 'refs/tags/v') || startsWith(github.ref, 'refs/tags/testv')
     uses: $/.github/workflows/deploy.yml
+    secrets:
+      PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+      TEST_PYPI_PASSWORD: ${{ secrets.TEST_PYPI_PASSWORD }}

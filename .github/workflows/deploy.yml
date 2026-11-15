@@ -2,13 +2,18 @@ name: Deploy
 
 on:
   workflow_call:
+    secrets:
+      PYPI_PASSWORD:
+        required: false
+      TEST_PYPI_PASSWORD:
+        required: false
 
 permissions:
   contents: read
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -36,7 +41,7 @@ jobs:
           if-no-files-found: error
 
   deploy-testpypi:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: build
     if: startsWith(github.ref, 'refs/tags/testv')
     environment:
@@ -64,7 +69,7 @@ jobs:
         run: uv publish --publish-url https://test.pypi.org/legacy/ --check-url https://test.pypi.org/simple/ dist/*
 
   deploy-pypi:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: build
     if: startsWith(github.ref, 'refs/tags/v')
     environment:
