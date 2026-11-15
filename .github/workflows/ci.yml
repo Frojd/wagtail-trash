@@ -124,6 +124,3 @@ jobs:
     needs: [lint, test, test-lowest, security, security-actions]
     if: startsWith(github.ref, 'refs/tags/v') || startsWith(github.ref, 'refs/tags/testv')
     uses: $/.github/workflows/deploy.yml
-    secrets:
-      PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-      TEST_PYPI_PASSWORD: ${{ secrets.TEST_PYPI_PASSWORD }}

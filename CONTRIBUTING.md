@@ -142,3 +142,22 @@ Releases are published automatically: pushing a `v*` tag publishes to PyPI, and 
 `testv*` tag publishes to TestPyPI. The package is built once in the `build` job in
 `deploy.yml` and the same files are uploaded by `deploy-pypi` or `deploy-testpypi`,
 which run in the `pypi` and `testpypi` GitHub environments.
+
+The tag must match the version in `wagtail_trash/version.py`, otherwise the `build`
+job fails. To release:
+
+1. Set the version in `wagtail_trash/version.py` and push `testv<version>`, for
+   example `testv3.3.0`
+2. Check the release on https://test.pypi.org/project/wagtail-trash/ and install it
+   without dependencies, since anyone can upload packages such as `wagtail` to
+   TestPyPI:
+
+   ```bash
+   uv pip install --no-deps --index-url https://test.pypi.org/simple/ wagtail-trash==<version>
+   ```
+
+3. Merge the release into `main` and push `v<version>`
+
+If a publish job fails, re-run that job. It uploads the same files and skips the
+ones already published. If a broken build was published to TestPyPI, test again
+with a release candidate such as `3.3.0rc1` before tagging the final version.

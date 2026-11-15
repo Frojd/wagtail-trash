@@ -2,11 +2,6 @@ name: Deploy
 
 on:
   workflow_call:
-    secrets:
-      PYPI_PASSWORD:
-        required: false
-      TEST_PYPI_PASSWORD:
-        required: false
 
 permissions:
   contents: read
@@ -25,6 +20,15 @@ jobs:
         run: python -m pip install --require-hashes -r requirements/uv.txt
       - name: Build
         run: uv build --build-constraints requirements/build-constraints.txt --require-hashes
+      - name: Check that the tag matches the built version
+        run: |
+          tag_version="${GITHUB_REF_NAME#testv}"
+          tag_version="${tag_version#v}"
+          built_version="$(basename dist/wagtail_trash-*.whl | cut -d- -f2)"
+          if [ "$tag_version" != "$built_version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match built version $built_version"
+            exit 1
+          fi
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: dist
@@ -57,7 +61,7 @@ jobs:
       - name: Release to Test PyPi
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.TEST_PYPI_PASSWORD }}
-        run: uv publish --publish-url https://test.pypi.org/legacy/ dist/*
+        run: uv publish --publish-url https://test.pypi.org/legacy/ --check-url https://test.pypi.org/simple/ dist/*
 
   deploy-pypi:
     runs-on: ubuntu-latest
@@ -85,4 +89,4 @@ jobs:
       - name: Release to PyPi
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_PASSWORD }}
-        run: uv publish dist/*
+        run: uv publish --check-url https://pypi.org/simple/ dist/*
