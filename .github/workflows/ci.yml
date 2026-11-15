@@ -123,7 +123,7 @@ jobs:
   deploy:
     needs: [lint, test, test-lowest, security, security-actions]
     if: startsWith(github.ref, 'refs/tags/v') || startsWith(github.ref, 'refs/tags/testv')
+    permissions:
+      contents: read
+      id-token: write
     uses: $/.github/workflows/deploy.yml
-    secrets:
-      PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-      TEST_PYPI_PASSWORD: ${{ secrets.TEST_PYPI_PASSWORD }}

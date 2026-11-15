@@ -2,11 +2,6 @@ name: Deploy
 
 on:
   workflow_call:
-    secrets:
-      PYPI_PASSWORD:
-        required: false
-      TEST_PYPI_PASSWORD:
-        required: false
 
 permissions:
   contents: read
@@ -50,6 +45,9 @@ jobs:
     concurrency:
       group: deploy-testpypi
       cancel-in-progress: false
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -64,9 +62,7 @@ jobs:
           name: dist
           path: dist/
       - name: Release to Test PyPi
-        env:
-          UV_PUBLISH_TOKEN: ${{ secrets.TEST_PYPI_PASSWORD }}
-        run: uv publish --publish-url https://test.pypi.org/legacy/ --check-url https://test.pypi.org/simple/ dist/*
+        run: uv publish --trusted-publishing always --publish-url https://test.pypi.org/legacy/ --check-url https://test.pypi.org/simple/ dist/*
 
   deploy-pypi:
     runs-on: ubuntu-24.04
@@ -78,6 +74,9 @@ jobs:
     concurrency:
       group: deploy-pypi
       cancel-in-progress: false
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -92,6 +91,4 @@ jobs:
           name: dist
           path: dist/
       - name: Release to PyPi
-        env:
-          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_PASSWORD }}
-        run: uv publish --check-url https://pypi.org/simple/ dist/*
+        run: uv publish --trusted-publishing always --check-url https://pypi.org/simple/ dist/*
