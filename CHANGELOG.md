@@ -41,6 +41,7 @@
 - Silence treebeard manager warnings from Wagtail releases before 7.4.3 in the test settings (@marteinn)
 - Include the full test suite and runtests.py in the source distribution so tests can run from the sdist (@marteinn)
 - Add a test that fails when wagtail_trash models have changes without a migration (@marteinn)
+- Add a test that fails on system check warnings (@marteinn)
 
 ### Removed
 - Drop support for Wagtail versions below 7.4 (@marteinn)
