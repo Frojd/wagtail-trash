@@ -11,7 +11,7 @@
 - Test lowest declared dependency versions in CI (@marteinn)
 - Split CI into ci.yml and a reusable deploy.yml following the Frojd CI/CD standard, using GitHub environments and limited workflow permissions (@marteinn)
 - Lint GitHub Actions workflows with zizmor and scan for vulnerabilities, misconfigurations and secrets with Trivy in CI (@marteinn)
-- Remove deprecated setup_requires from setup.py (@marteinn)
+- Remove deprecated setup_requires from setup.py and replace the license classifier with an SPDX license expression (@marteinn)
 - Replace black and isort with ruff for formatting and linting, with all lint rules enabled except a documented ignore list (@marteinn)
 
 ### Fixed

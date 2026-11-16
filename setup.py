@@ -26,7 +26,7 @@ setup(
         "testing": testing_extras,
     },
     zip_safe=False,
-    license="MIT License",
+    license_expression="MIT",
     packages=find_packages(exclude=["tests*"]),
     include_package_data=True,
     package_data={},
@@ -47,7 +47,6 @@ setup(
         "Framework :: Wagtail",
         "Framework :: Wagtail :: 7",
         "Framework :: Wagtail :: 8",
-        "License :: OSI Approved :: MIT License",
     ],
     project_urls={
         "Source": "https://github.com/Frojd/wagtail-trash/",
