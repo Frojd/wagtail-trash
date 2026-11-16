@@ -22,6 +22,8 @@
 - Replace black and isort with ruff for formatting and linting, with all lint rules enabled except a documented ignore list (@marteinn)
 
 ### Fixed
+- Fix README install instructions, hook ordering notes and page manager description (@marteinn)
+- Add feature list, restoring pages and known limitations sections to README (@marteinn)
 - Replace removed _editor_js.html template include with insert_editor_js hook output in restore view (@marteinn)
 - Escape page titles in trash can listing to prevent XSS (@marteinn)
 - Show an error instead of crashing when restoring a page whose parent was deleted or whose slug is taken at the destination (@marteinn)
