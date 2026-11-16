@@ -21,12 +21,12 @@ class TrashCan(models.Model):
     time_recycled = models.DateTimeField(_("Time Recycled"), auto_now_add=True)
     data = models.TextField(_("Data"), blank=True)
 
-    def __str__(self):
-        return self.page.title
-
     class Meta:
         verbose_name = _("Trash Can")
         verbose_name_plural = _("Trash Cans")
+
+    def __str__(self):
+        return self.page.title
 
 
 class TrashCanPage(Page):

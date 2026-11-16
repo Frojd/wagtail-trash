@@ -4,11 +4,11 @@ from wagtail_trash.models import TrashCan, TrashCanPage
 
 
 class Command(BaseCommand):
-    """
-    Delete stray pages from recycle bin(s)
+    """Delete stray pages from recycle bin(s).
 
     Example:
         ./manage.py delete_stray_pages
+
     """
 
     def handle(self, *args, **options):
@@ -22,4 +22,4 @@ class Command(BaseCommand):
                 child_page.delete()
                 num_deleted_pages += 1
 
-        self.stdout.write("Deleted {} stray pages".format(num_deleted_pages))
+        self.stdout.write(f"Deleted {num_deleted_pages} stray pages")

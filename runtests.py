@@ -9,14 +9,14 @@ from django.core.management import execute_from_command_line
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tests.app.settings")
 
 print("Using settings: {}".format(os.environ["DJANGO_SETTINGS_MODULE"]))
-print("Using django: {}".format(django.get_version()))
-print("Using Wagtail {}".format(wagtail.__version__))
+print(f"Using django: {django.get_version()}")
+print(f"Using Wagtail {wagtail.__version__}")
 
 
 def runtests():
-    args, rest = argparse.ArgumentParser().parse_known_args()
+    _, rest = argparse.ArgumentParser().parse_known_args()
 
-    argv = [sys.argv[0], "test"] + rest
+    argv = [sys.argv[0], "test", *rest]
     execute_from_command_line(argv)
 
 

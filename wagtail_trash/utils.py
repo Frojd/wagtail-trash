@@ -96,7 +96,8 @@ def restore_and_move_page(rb, move_to_page, request):
     if not rb.page.specific.can_move_to(move_to_page):
         raise RestoreError(
             _(
-                "This page type is not allowed at the destination, choose another location."
+                "This page type is not allowed at the destination, "
+                "choose another location."
             )
         )
 

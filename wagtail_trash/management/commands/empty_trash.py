@@ -7,13 +7,13 @@ from wagtail_trash.models import TrashCan
 
 
 class Command(BaseCommand):
-    """
-    Remove pages from recycle bin
+    """Remove pages from recycle bin.
 
     Example:
         ./manage.py empty_trash --older_than_days=30
 
     Will remove all pages that were deleted more than 30 days ago
+
     """
 
     def add_arguments(self, parser):

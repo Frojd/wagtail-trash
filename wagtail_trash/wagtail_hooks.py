@@ -1,9 +1,10 @@
 from django.shortcuts import reverse
 from django.urls import path
-from django.utils.html import format_html
+from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from wagtail import hooks
+from wagtail.admin.views.pages.bulk_actions.delete import DeleteBulkAction
 from wagtail_modeladmin.helpers import ButtonHelper, PermissionHelper
 from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
 from wagtail_modeladmin.views import DeleteView, IndexView
@@ -43,8 +44,10 @@ class TrashButtonHelper(ButtonHelper):
         }
 
     def get_buttons_for_obj(
-        self, obj, exclude=["edit"], classnames_add=None, classnames_exclude=None
+        self, obj, exclude=None, classnames_add=None, classnames_exclude=None
     ):
+        if exclude is None:
+            exclude = ["edit"]
         buttons = super().get_buttons_for_obj(
             obj, exclude, classnames_add, classnames_exclude
         )
@@ -85,7 +88,6 @@ class TrashCanModelAdmin(ModelAdmin):
     admin_order_field = "title"
 
     list_display = ("page_tree", "time_recycled", "user")
-    # search_fields = ("title",)
 
     button_helper_class = TrashButtonHelper
     permission_helper_class = TrashPermissionHelper
@@ -99,17 +101,14 @@ class TrashCanModelAdmin(ModelAdmin):
         descendants = rb.page.get_descendants(inclusive=True)
 
         depth = rb.page.depth
-        output = []
+        rows = []
 
         for i, x in enumerate(descendants):
-            indent = mark_safe("&nbsp;" * (x.depth - depth))
+            indent = mark_safe("&nbsp;" * (x.depth - depth))  # noqa: S308
+            title = format_html("<strong>{}</strong>", x.title) if i == 0 else x.title
+            rows.append((indent, title))
 
-            if i == 0:
-                output.append(format_html("{}<strong>{}</strong><br>", indent, x.title))
-            else:
-                output.append(format_html("{}{}<br>", indent, x.title))
-
-        return mark_safe("".join(output))
+        return format_html_join("", "{}{}<br>", rows)
 
     def get_queryset(self, request):
         # Create a bin if there is none
@@ -123,10 +122,9 @@ modeladmin_register(TrashCanModelAdmin)
 
 @hooks.register("before_bulk_action")
 def delete_bulk_pages(request, action_type, objects, action_class_instance):
-    from wagtail.admin.views.pages.bulk_actions.delete import DeleteBulkAction
-
     if action_type == "delete" and isinstance(action_class_instance, DeleteBulkAction):
         return trash_bulk_delete(request, objects)
+    return None
 
 
 @hooks.register("before_delete_page")
@@ -136,16 +134,12 @@ def delete_page(request, page):
 
 @hooks.register("construct_page_chooser_queryset")
 def exclude_trash_can_from_chooser(pages, request):
-    pages = pages.not_type(TrashCanPage)
-
-    return pages
+    return pages.not_type(TrashCanPage)
 
 
 @hooks.register("construct_explorer_page_queryset")
 def exclude_trash_can_from_explorer(parent_page, pages, request):
-    pages = pages.not_type(TrashCanPage)
-
-    return pages
+    return pages.not_type(TrashCanPage)
 
 
 @hooks.register("register_admin_urls")

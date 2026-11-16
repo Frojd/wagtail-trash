@@ -57,15 +57,24 @@ DJANGO_SETTINGS_MODULE=tests.app.settings_with_wagtail_modeladmin python runtest
 
 ## Code style
 
-The code is formatted with [black](https://github.com/psf/black) and
-[isort](https://pycqa.org/isort/), both enforced in CI:
+The code is formatted and linted with [ruff](https://docs.astral.sh/ruff/),
+configured in `pyproject.toml` and enforced in CI. All lint rules are enabled, the
+ones that do not fit the project are ignored there with a reason. Prefer fixing a
+finding over ignoring it, and use `# noqa: <code>` for a single line rather than
+adding to the ignore list. To format and apply fixes:
 
 ```bash
 make format_code
 ```
 
-`make format_code` runs the exact black and isort versions locked in `uv.lock`, the
-same ones CI uses, so it needs [uv](https://docs.astral.sh/uv/).
+To run the same checks as CI:
+
+```bash
+make lint
+```
+
+Both run the exact ruff version locked in `uv.lock`, the same one CI uses, so they
+need [uv](https://docs.astral.sh/uv/).
 
 ## CI workflows
 
@@ -96,7 +105,7 @@ trivy fs --config trivy.yaml .
 
 ## CI dependencies
 
-The tools CI uses to lint and build (uv, black, isort, zizmor, setuptools, wheel) are
+The tools CI uses to lint and build (uv, ruff, zizmor, setuptools, wheel) are
 declared as dependency groups in `pyproject.toml` and locked with hashes in
 `uv.lock`. Publishing uses `uv publish`. `requirements/uv.txt` (used to install uv
 itself) and `requirements/build-constraints.txt` are exported from `uv.lock`.

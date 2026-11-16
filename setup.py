@@ -1,14 +1,13 @@
-#!/usr/bin/env python
+from pathlib import Path
+
 from setuptools import find_packages, setup
 
-with open("wagtail_trash/version.py", "r") as f:
-    version = None
-    exec(f.read())
+version = None
+exec(Path("wagtail_trash/version.py").read_text(encoding="utf-8"))  # noqa: S102
 
-with open("README.md", "r") as f:
-    readme = f.read()
+readme = Path("README.md").read_text(encoding="utf-8")
 
-testing_extras = ["black", "wagtail-factories>=4.5"]
+testing_extras = ["wagtail-factories>=4.5"]
 
 setup(
     name="wagtail-trash",

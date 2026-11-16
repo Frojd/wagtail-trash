@@ -51,8 +51,8 @@ def trash_bulk_delete(request, pages):
 
 
 def trash_delete(request, page):
-    if not request.method == "POST":
-        return
+    if request.method != "POST":
+        return None
 
     trash_can = trash_can_for_request(request)
 

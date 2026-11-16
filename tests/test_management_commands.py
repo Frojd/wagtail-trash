@@ -49,7 +49,7 @@ class TestEmptyTrashCommand(TestCase, WagtailTestUtils):
 
 
 class TestDeleteStraypagesCommand(TestCase, WagtailTestUtils):
-    def test_delete_stray_pages_removes_pages_from_trash_can_witout_trashcan_association(
+    def test_delete_stray_pages_removes_pages_from_trash_can_witout_trashcan_association(  # noqa: E501
         self,
     ):
         root_page = Page.objects.get(url_path="/")

@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [3.3.0] - 2026-11-16
 ### Added
 - Add support for Wagtail 7.4 (@marteinn)
 - Add support for Python 3.14 (@marteinn)
@@ -18,7 +18,8 @@
 - Split CI into ci.yml and a reusable deploy.yml following the Frojd CI/CD standard (@marteinn)
 - Add Trivy scanning for vulnerabilities, misconfigurations and secrets in CI (@marteinn)
 - Remove deprecated setup_requires from setup.py (@marteinn)
-- Read publish tokens from GitHub environments, check that the tag matches the built version and make uploads retry safe (@marteinn)
+- Publish with Trusted Publishing, check that the tag matches the built version and make uploads retry safe (@marteinn)
+- Replace black and isort with ruff for formatting and linting, with all lint rules enabled except a documented ignore list (@marteinn)
 
 ### Fixed
 - Replace removed _editor_js.html template include with insert_editor_js hook output in restore view (@marteinn)

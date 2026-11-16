@@ -1,6 +1,10 @@
 format_code:
-	uv run --frozen --only-group lint black --exclude "/(\.eggs|\.git|\.hg|\.mypy_cache|\.nox|\.tox|\.venv|venv|_build|buck-out|build|dist|migrations)/" ./
-	uv run --frozen --only-group lint isort .
+	uv run --frozen --only-group lint ruff format .
+	uv run --frozen --only-group lint ruff check --fix .
+
+lint:
+	uv run --frozen --only-group lint ruff format --check .
+	uv run --frozen --only-group lint ruff check .
 
 makemigrations:
 	docker-compose exec web django-admin makemigrations

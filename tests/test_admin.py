@@ -50,7 +50,8 @@ class TestAdmin(TestCase, WagtailTestUtils):
         index = trash_admin_url_helper.get_action_url("index")
         resp = self.client.get(index)
 
-        # Since sub_sub_pages parent is now in the trash can we should not show the "Restore"-button.
+        # Since sub_sub_pages parent is now in the trash can we should not show
+        # the "Restore"-button.
         self.assertFalse(
             reverse("wagtail_trash_restore", args=(sub_sub_page.id,))
             in str(resp.content)
@@ -59,7 +60,8 @@ class TestAdmin(TestCase, WagtailTestUtils):
             reverse("wagtail_trash_move", args=(sub_sub_page.id,)) in str(resp.content)
         )
 
-        # However - top page still has a parent (root) and should be able to be restored.
+        # However - top page still has a parent (root) and should be able to be
+        # restored.
         self.assertTrue(
             reverse("wagtail_trash_restore", args=(top_page.id,)) in str(resp.content)
         )
@@ -589,7 +591,8 @@ class TestAdmin(TestCase, WagtailTestUtils):
         self.assertFormError(
             response.context["form"],
             "move_page",
-            "This page type is not allowed at the destination, choose another location.",
+            "This page type is not allowed at the destination, "
+            "choose another location.",
         )
         article.refresh_from_db()
         self.assertEqual(article.get_parent().specific_class, TrashCanPage)

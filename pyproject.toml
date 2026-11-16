@@ -1,4 +1,39 @@
 [dependency-groups]
 uv = ["uv==0.13.5"]
-lint = ["black==22.6.0", "isort==9.0.2", "zizmor==1.32.0"]
+lint = ["ruff==0.17.4", "zizmor==1.32.0"]
 build = ["setuptools", "wheel"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+extend-exclude = ["migrations", "build", "*.md"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    # Conflicts with ruff format
+    "COM812",
+    # Docstrings are not required, the remaining D rules apply when one is written
+    "D100", "D101", "D102", "D103", "D104", "D105", "D106", "D107",
+    # D203 and D213 are incompatible with D211 and D212, which are kept
+    "D203", "D213",
+    # Type annotations are left to mypy
+    "ANN",
+    # No copyright header in source files
+    "CPY001",
+    # Django and Wagtail call hooks and overridden methods with fixed signatures
+    "ARG001", "ARG002",
+    # Django and Wagtail configure models and admin classes with mutable class attributes
+    "RUF012",
+    # Tests use Django TestCase, not pytest
+    "PT009", "PT027",
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["wagtail_trash", "tests"]
+
+[tool.ruff.lint.per-file-ignores]
+"settings_dev.py" = ["F405"]
+"tests/app/settings_with_wagtail_modeladmin.py" = ["F405"]
+"tests/**" = ["S101", "S105", "S106", "PLR2004"]
+"runtests.py" = ["T201"]
