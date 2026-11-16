@@ -6,3 +6,6 @@ exclude manage.py
 recursive-include wagtail_trash/templates *
 recursive-include wagtail_trash/migrations *
 recursive-include wagtail_trash/locale *
+graft tests
+include runtests.py
+global-exclude __pycache__ *.py[cod]

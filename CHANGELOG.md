@@ -39,6 +39,7 @@
 - Add tests for bulk actions other than delete and for excluding restore buttons, reaching full branch coverage (@marteinn)
 - Move the shared trash logic of single and bulk delete into move_to_trash (@marteinn)
 - Silence treebeard manager warnings from Wagtail releases before 7.4.3 in the test settings (@marteinn)
+- Include the full test suite and runtests.py in the source distribution so tests can run from the sdist (@marteinn)
 
 ### Removed
 - Drop support for Wagtail versions below 7.4 (@marteinn)
