@@ -2,54 +2,40 @@
 
 ## [3.3.0] - 2026-11-16
 ### Added
-- Add support for Wagtail 7.4 (@marteinn)
-- Add support for Python 3.14 (@marteinn)
-- Add support for Wagtail 8.0 and 8.1 (@marteinn)
-- Add support for Django 6.0 and 6.1 (@marteinn)
-- Add requirements section with supported Python, Django and Wagtail versions to README (@marteinn)
+- Add support for Wagtail 7.4, 8.0 and 8.1, Django 6.0 and 6.1, and Python 3.14 (@marteinn)
 
 ### Changed
-- Require wagtail-modeladmin 2.5 or newer (@marteinn)
-- Require wagtail-factories 4.5 or newer for testing (@marteinn)
+- Require wagtail-modeladmin 2.5 or newer, and wagtail-factories 4.5 or newer for testing (@marteinn)
 - Lock CI tooling with hashes in uv.lock using dependency groups and add make lock to regenerate them (@marteinn)
-- Split CI publish into build and publish jobs using GitHub environments and uv publish, and limit workflow permissions (@marteinn)
+- Publish with Trusted Publishing and uv publish in separate build and publish jobs, check that the tag matches the built version and make uploads retry safe (@marteinn)
 - Test lowest declared dependency versions in CI (@marteinn)
-- Lint GitHub Actions workflows with zizmor in CI (@marteinn)
-- Split CI into ci.yml and a reusable deploy.yml following the Frojd CI/CD standard (@marteinn)
-- Add Trivy scanning for vulnerabilities, misconfigurations and secrets in CI (@marteinn)
+- Split CI into ci.yml and a reusable deploy.yml following the Frojd CI/CD standard, using GitHub environments and limited workflow permissions (@marteinn)
+- Lint GitHub Actions workflows with zizmor and scan for vulnerabilities, misconfigurations and secrets with Trivy in CI (@marteinn)
 - Remove deprecated setup_requires from setup.py (@marteinn)
-- Publish with Trusted Publishing, check that the tag matches the built version and make uploads retry safe (@marteinn)
 - Replace black and isort with ruff for formatting and linting, with all lint rules enabled except a documented ignore list (@marteinn)
 
 ### Fixed
-- Fix README install instructions, hook ordering notes and page manager description (@marteinn)
-- Add feature list, restoring pages and known limitations sections to README (@marteinn)
+- Fix README install instructions, hook ordering and page manager notes, and add requirements, features, restoring pages and known limitations sections (@marteinn)
 - Replace removed _editor_js.html template include with insert_editor_js hook output in restore view (@marteinn)
 - Escape page titles in trash can listing to prevent XSS (@marteinn)
 - Show an error instead of crashing when restoring a page whose parent was deleted or whose slug is taken at the destination (@marteinn)
-- Prevent restoring pages into a parent or destination that is itself in the trash can (@marteinn)
+- Prevent restoring into a parent that is in the trash can and enforce page type rules such as parent_page_types and max_count_per_parent (@marteinn)
 - Check restore permissions against the destination so non-superusers can restore pages, and require add and publish rights there (@marteinn)
-- Show a form error instead of crashing when restore and move gets an unknown destination page (@marteinn)
+- Show a form error for unknown destination pages and return 404 for pages not in the trash can instead of crashing in restore and move (@marteinn)
 - Require POST to restore a page, GET now shows a confirmation page, and return 404 for unknown pages (@marteinn)
-- Return 404 instead of crashing when restore and move is opened for a page that is not in the trash can (@marteinn)
-- Enforce page type rules such as parent_page_types and max_count_per_parent when restoring a page (@marteinn)
 - Exclude descendants of trashed pages from the sitemap when using SkipSitemapIfInTrashMixin (@marteinn)
 - Ignore /plans/ dir for boilerplate (@marteinn)
 - Pin GitHub Actions to commit SHAs and upgrade checkout and setup-python to v7 for Node.js 24 (@marteinn)
-- Remove redundant hook registrations in tests, add trash_page test helper and add missing assertions (@marteinn)
+- Remove redundant hook registrations in tests, add trash_page helper and tests for other bulk actions and restore buttons, reaching full branch coverage (@marteinn)
 - Only strip the trash prefix from the slug when restoring a page, so slugs containing trash-N- are kept intact (@marteinn)
 - Redirect bulk delete to the explorer root instead of crashing or picking an arbitrary parent when pages have no shared parent (@marteinn)
-- Add tests for bulk actions other than delete and for excluding restore buttons, reaching full branch coverage (@marteinn)
 - Move the shared trash logic of single and bulk delete into move_to_trash (@marteinn)
 - Silence treebeard manager warnings from Wagtail releases before 7.4.3 in the test settings (@marteinn)
 - Include the full test suite and runtests.py in the source distribution so tests can run from the sdist (@marteinn)
-- Add a test that fails when wagtail_trash models have changes without a migration (@marteinn)
-- Add a test that fails on system check warnings (@marteinn)
+- Add tests that fail on missing migrations for wagtail_trash models and on system check warnings (@marteinn)
 
 ### Removed
-- Drop support for Wagtail versions below 7.4 (@marteinn)
-- Drop support for Python 3.9 and 3.10 (@marteinn)
-- Drop support for Django 4.2 and 5.1 (@marteinn)
+- Drop support for Wagtail below 7.4, Django 4.2 and 5.1, and Python 3.9 and 3.10 (@marteinn)
 
 ## [3.2.0] - 2025-08-23
 ### Added
