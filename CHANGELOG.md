@@ -1,7 +1,11 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- Add support for Python 3.15 with Django 6.1 and Wagtail 8.1 (@marteinn)
+
 ### Changed
+- Upgrade CI tooling to uv 0.13.10, ruff 0.17.6, zizmor 1.33.1 and Trivy 0.76.2 (@marteinn)
 - Ignore Trivy DS-0026 missing HEALTHCHECK for the local development Dockerfile (@marteinn)
 
 ## [3.3.0] - 2026-11-16

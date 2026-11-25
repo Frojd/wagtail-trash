@@ -20,12 +20,12 @@ Instead of deleting pages when pressing delete, pages will get thrown into the "
 
 ## Requirements
 
-- Python 3.11, 3.12, 3.13, 3.14
+- Python 3.11, 3.12, 3.13, 3.14, 3.15
 - Django 5.2, 6.0, 6.1
 - Wagtail 7.4, 8.0, 8.1
 - wagtail-modeladmin 2.5 or newer
 
-Django 6.0 and 6.1 require Python 3.12 or newer, and Wagtail 7.4 supports Django 5.2 and 6.0 only.
+Django 6.0 and 6.1 require Python 3.12 or newer, Python 3.15 requires Django 6.1 and Wagtail 8.1, and Wagtail 7.4 supports Django 5.2 and 6.0 only.
 
 
 ## Install

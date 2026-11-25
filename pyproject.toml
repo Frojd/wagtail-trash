@@ -1,6 +1,6 @@
 [dependency-groups]
-uv = ["uv==0.13.5"]
-lint = ["ruff==0.17.4", "zizmor==1.32.0"]
+uv = ["uv==0.13.10"]
+lint = ["ruff==0.17.6", "zizmor==1.33.1"]
 build = ["setuptools", "wheel"]
 
 [tool.ruff]
