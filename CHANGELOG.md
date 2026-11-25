@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+### Changed
+- Ignore Trivy DS-0026 missing HEALTHCHECK for the local development Dockerfile (@marteinn)
+
 ## [3.3.0] - 2026-11-16
 ### Added
 - Add support for Wagtail 7.4, 8.0 and 8.1, Django 6.0 and 6.1, and Python 3.14 (@marteinn)

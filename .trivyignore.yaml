@@ -10,3 +10,8 @@ misconfigurations:
   - id: DS-0031
     paths:
       - Dockerfile
+
+  # Dockerfile is only used for local development via docker-compose, no orchestrator consumes a healthcheck
+  - id: DS-0026
+    paths:
+      - Dockerfile
