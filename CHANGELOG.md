@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 ### Added
+### Changed
+### Fixed
+### Removed
+### Security
+
+## [3.3.1] - 2026-11-25
+### Added
 - Add support for Python 3.15 with Django 6.1 and Wagtail 8.1 (@marteinn)
 
 ### Changed
